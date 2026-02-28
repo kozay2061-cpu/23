@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <title>2D လည်ဂျာ V.32.3 </title>
+    <link rel="icon" href="https://i.ibb.co/6ckfFrqw/Gemini-Generated-Image-nlrzqsnlrzqsnlrz-1-1-1.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* Google Fonts ယူခြင်း (Padauk - Unicode, Roboto - English) */
+    @import url('https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Roboto:wght@300;400;500;700&family=Pyidaungsu&display=swap');
+/* Font Classes ကြေညာခြင်း */
+    .font-uni { font-family: 'Pyidaungsu', 'Padauk', sans-serif !important;}
+    .font-eng {font-family: 'Roboto', 'Arial', sans-serif !important;}
+    .font-zg {font-family: 'Zawgyi-One', 'Zawgyi1', sans-serif !important;}
+/* Default (မူလ) ဖောင့်သတ်မှတ်ချက် */
+body {
+    font-family: 'Pyidaungsu', 'Padauk', 'Roboto', sans-serif; /* မူလ Unicode ထားမည် */
+    transition: font-family 0.3s ease; /* ဖောင့်ပြောင်းရင် ညက်ညောစေရန် */
+}
+        * { box-sizing: border-box; }
+       body { 
+    font-family: 'Segoe UI', sans-serif; 
+    margin: 0; 
+    background: #2c3e50; 
+    color: #333; 
+    /* (၁) height ကို 100vh ကနေ auto ပြောင်းပါ */
+    height: auto !important; 
+    /* (၂) overflow ကို hidden ကနေ auto ပြောင်းပါ */
+    overflow: auto !important; 
+    /* (၃) လက်နဲ့ဆွဲတာ ခွင့်ပြုဖို့ ဒါလေးထည့်ပါ */
+    touch-action: manipulation !important; 
+}
+#mainApp { 
+    display: flex; 
+    flex-direction: column; 
+    /* (၄) ဒီမှာလည်း auto ပြောင်းပေးပါ */
+    height: auto !important; 
+    background: #f4f6f8; 
+    /* (၅) hidden ကို visible သို့မဟုတ် auto ပြောင်းပါ */
+    overflow: visible !important; 
+}
+        /* Buttons */
+        .btn-header { border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-header:hover { opacity: 0.9; transform: translateY(-1px); }
+        .limit-input { border: 1px solid #ddd; border-radius: 4px; font-weight: bold; color: #d9534f; text-align: center; }
+        /* Layout */
+        .main-wrapper { display: flex; gap: 10px; flex: 1; padding: 10px; overflow: hidden; }
+        .left-panel { flex: 1; display: flex; flex-direction: column; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.log-container { 
+    width: 22%; 
+    background: white; 
+    display: flex; 
+    flex-direction: column; /* အပေါ်အောက် စီမယ် */
+    border-radius: 8px; 
+    border: 1px solid #eee; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    
+    /* ⚠️ အဓိက ပြင်ဆင်ချက်: Container ကို Scroll ပိတ်လိုက်ပါ */
+    /* ဒါမှ Search Box က အပေါ်မှာ ငြိမ်နေမှာပါ */
+    overflow: hidden !important; 
+    max-height: 400px; 
+}
+/* Log စာရင်းများထည့်မည့် နေရာသီးသန့် (ဒါကိုမှ Scroll လုပ်မယ်) */
+#logListBody {
+    flex: 1;            /* နေရာလွတ်သမျှ ယူမယ် */
+    overflow-y: auto;   /* ဒီကောင်ကိုပဲ Scroll လုပ်မယ် */
+}
+/* ကျန်တာတွေ မူရင်းအတိုင်း */
+.log-item { border-bottom: 1px solid #f0f0f0; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #333; }
+.log-item:hover { background: #f9f9f9; }
+.btn-delete { color: #ff4444; border: none; background: #ffebee; cursor: pointer; font-size: 14px; font-weight: bold; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .right-panel { width: 28%; display: flex; flex-direction: column; gap: 8px; height: 100%; }
+        .user-info-box { background: white; padding: 10px 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; flex-shrink: 0; }
+        .input-control-box { background: white; padding: 10px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+        /* height ကို 400px ကနေ 200px (သို့) flex လို့ ပြောင်းပါ */
+.input-area { 
+    height: 250px; /* ဒါလေးပြောင်းလိုက်ရင် အောက်ကခလုတ်တွေနဲ့ အံဝင်ခွင်ကျ ဖြစ်သွားပါမယ် */
+    font-size: 16px; 
+    padding: 12px; 
+    border: 2px solid #90caf9; 
+    border-radius: 8px; 
+    resize: none; 
+    outline: none; 
+    background: #fcfcfc; 
+}
+        .input-area:focus { border-color: #1976d2; background: #fff; box-shadow: 0 0 8px rgba(25, 118, 210, 0.15); }
+        .btn-submit { background: linear-gradient(135deg, #1976d2, #1565c0); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; padding: 12px; box-shadow: 0 4px 6px rgba(25, 118, 210, 0.2); transition: 0.2s; flex-shrink: 0; }
+        .btn-submit:active { transform: scale(0.98); }
+        /* Table */
+        .split-container { display: grid; grid-template-columns: repeat(6, 1fr); background: white; min-width: 600px; border: 1px solid #e0e0e0; height: 100%; overflow-y: auto; }
+        .vertical-col { border-right: 1px solid #eee; }
+        .col-header { background: #34495e; color: white; text-align: center; font-size: 12px; padding: 6px; font-weight: bold; position: sticky; top: 0; z-index: 5; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table td { border-bottom: 1px solid #f0f0f0; text-align: center;
+        padding: 4px; font-size: 13px; font-weight: bold; }
+        .data-table th { background-color: #f1f3f5; color: #495057; font-size:
+        13px; padding: 5px; border-bottom: 2px solid #dee2e6; position: sticky;
+        top: 28px; z-index: 4; }
+        .num-text { color: #1a73e8; } .amt-text { color: #d9534f; }
+        .win-cell { background-color: #c8e6c9 !important; border: 2px solid #2e7d32 !important; }
+        .limit-over { background-color: #fff9c4 !important; color: #f57f17 !important; }
+        .has-amount { background-color: #e3f2fd; } .empty-cell { color: #ccc; opacity: 0.4; }
+        .tab { padding: 6px 12px; background: #fff; border: 1px solid #ddd;
+        border-radius: 15px; cursor: pointer; display: inline-block; margin: 0
+        2px 5px 2px; font-size: 16px; font-weight: bold; color: #555;
+        transition: 0.2s; }
+        .tab.active { background: #12E4FF; color: #fff; border-color: #12E4FF; box-shadow: 0 2px 4px rgba(26,115,232,0.3); }
+        /* Report Table */
+        /* Report Table Modern Style */
+.report-table {
+    width: 100%;
+    border-collapse: separate; /* ထောင့်ကွေးလေးတွေ ပေါ်အောင် */
+    border-spacing: 0;
+    font-size: 9px; /* စာလုံးဆိုဒ် အနည်းငယ် ညှိပါ */
+    background: white;
+    border-radius: 10px; /* ဘောင်အကွေး */
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08); /* အရိပ်လေး ထည့်ပါ */
+    margin-bottom: 5px;
+    border: 1px solid #eceff1;
+}
+/* ခေါင်းစဉ်တန်း */
+.report-table th {
+    padding: 14px 8px !important;
+    text-align: center;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    border-bottom: none !important;
+}
+/* စာရင်းတန်းများ */
+.report-table td {
+    padding: 12px 8px !important;
+    text-align: center;
+    border-bottom: 1px solid #f1f3f5;
+    color: #455a64;
+    font-size: 10px;
+    font-weight: 200;
+    font-family: 'Consolas', 'Monaco', monospace; /* ဂဏန်းကြည့်ကောင်းအောင် */
+}
+/* ဇယားကွက် ကြားမျဉ်းများ (ဒေါင်လိုက်မျဉ်း ဖျောက်လိုက်ရင် ပိုရှင်းပါတယ်) */
+.report-table td, .report-table th {
+    border-right: 1px solid rgba(0,0,0,0.05);
+}
+.report-table td:last-child, .report-table th:last-child {
+    border-right: none;
+}
+/* Row Hover Effect (မောက်စ်တင်ရင် အရောင်ပြောင်း) */
+.report-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.005); /* အနည်းငယ် ကြွတက်စေခြင်း */
+    transition: 0.2s;
+}
+/* --- အရောင်များ --- */
+/* User Table (အညိုရောင် ခေါင်းစဉ်) */
+#reportTable thead tr { 
+    background: linear-gradient(135deg, #5d4037, #3e2723) !important; 
+}
+/* Net Position (ခရမ်းရောင် ခေါင်းစဉ်) */
+#summarySection .report-table thead tr { 
+    background: linear-gradient(135deg, #8e24aa, #4a148c) !important; 
+}
+/* Export List (အနီရောင် ခေါင်းစဉ်) */
+/* (ဒီ class ကို JS ထဲက Export Table မှာ ထည့်သုံးဖို့ လိုပါမယ်) */
+.export-header { 
+    background: linear-gradient(135deg, #e53935, #b71c1c) !important; 
+    color: white !important;
+}
+/* အပေါင်း/အနုတ် အရောင်များ */
+.text-plus { 
+    color: #2e7d32 !important; 
+    font-weight: 800; 
+    background: #e8f5e9; 
+    padding: 4px 8px; 
+    border-radius: 15px; 
+}
+.text-minus { 
+    color: #c62828 !important; 
+    font-weight: 800; 
+    background: #ffebee; 
+    padding: 4px 8px; 
+    border-radius: 15px; 
+}
+        /* Sidebar & Modals */
+        .sidebar { position: fixed; right: -400px; top: 0; width: 350px; max-width: 90%; height: 100%; background: #99BDBB; transition: 0.3s; z-index: 1001; overflow-y: auto; padding: 20px; box-sizing: border-box; color: white; }
+        .sidebar.active { right: 0; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .overlay.active { display: block; }
+        .setting-row { margin-bottom: 5px; }
+        .setting-row label { display: block; color: #bdc3c7; font-size: 13px; margin-bottom: 5px; }
+        .setting-row input, .setting-row textarea, .setting-row select { width: 100%; padding: 8px; border-radius: 6px; border: none; background: #34495e; color: white; box-sizing: border-box; }
+        #shortcutInputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #34495e; padding: 10px; border-radius: 8px; margin-top: 10px; }
+        #reportModal, #helpModal, #preLimitModal, #limitModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
+        .report-content, .help-content { background: white; color: #333; width: 95%; max-width: 600px; max-height: 90vh; border-radius: 12px; padding: 20px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        /* ACTIVATION MODAL STYLE */
+        #activationModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2c3e50; z-index: 999999; justify-content: center; align-items: center; flex-direction: column; color: white; }
+        .act-box { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .device-id-disp { font-family: monospace; background: #eee; padding: 10px; border-radius: 5px; font-size: 18px; font-weight: bold; margin: 10px 0; letter-spacing: 2px; }
+        .trial-info { color: #e67e22; font-weight: bold; margin-bottom: 5px; }
+        .help-table {
+    border-collapse: collapse; /* table line တွေကို တစ်ထပ်တည်းဖြစ်စေဖို့ */
+    width: 100%;
+}
+.help-table th, .help-table td {
+    border: 3px solid #ddd; /* ဘောင်အနားသတ် အရောင်နဲ့ အထူ */
+    padding: 12px; /* စာသားနဲ့ အနားသတ်ကြား အကွာအဝေး */
+    text-align: Center;
+}
+.help-table thead {
+    background-color: #f8f9fa; /* ခေါင်းစဉ်ပိုင်းကို အရောင်ဖျော့လေး ထည့်တာပါ */
+}
+ /* ========================================
+   MOBILE & TABLET RESPONSIVE FIX (New)
+   ==================================== */
+/* (၁) 760px အောက် (ဖုန်းများ) အတွက် */
+@media only screen and (max-width: 760px) { 
+    /* Body ကို ဘေးမထွက်အောင် ထိန်းမယ် */
+    body, html, #mainApp {
+        width: 100% !important;
+        overflow-x: auto !important; /* ဘေးကျော်တာ ပိတ်မယ် */
+        margin: 0 !important;
+        padding: 0 !important;
+        height: auto !important;
+    }
+    /* Main Wrapper ကို ဒေါင်လိုက်စီမယ် (Column) */
+    .main-wrapper { 
+        display: flex !important;
+        flex-direction: column !important; 
+        width: 100% !important; /* အကျယ်အပြည့်ယူမယ် */
+        gap: 15px;
+        box-sizing: border-box !important;
+        padding: 5px !important;
+    }
+    /* Panel တွေကို ၁၀၀% အပြည့်ဆွဲဆန့်မယ် (အဓိကအချက်) */
+    .left-panel, .log-container, .right-panel {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        flex: none !important;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        margin-bottom: 5px !important;
+    }
+    /* အမြင့်ချိန်ညှိခြင်းများ */
+    .left-panel { height: auto !important; min-height: 500px; } 
+    .log-container { height: 300px !important; max-height: 300px !important; }
+    .right-panel { height: auto !important; }
+    .input-area { height: 120px !important; }
+    /* Header အောက်က ခလုတ်တန်းများ */
+    .header + div {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .header + div > div {
+        margin-bottom: 5px !important;
+        width: 100% !important;
+    }
+    /* Sidebar */
+    .sidebar { width: 85% !important; max-width: 350px !important; }
+}
+/* (၂) 600px အောက် (ဖုန်းအသေးများ) အတွက် ဇယားကွက် ပြင်ဆင်မှု */
+@media only screen and (max-width: 600px) {
+    .report-table {
+        width: 100% !important;
+        font-size: 10px !important; 
+        margin-bottom: 5px !important;
+        table-layout: fixed !important; /* စာလုံးရှည်ရင် အောက်ဆင်းမယ် */
+    }
+    .report-table th, .report-table td {
+        padding: 4px 1px !important; 
+        height: auto !important;
+        word-wrap: break-word !important; /* စာလုံးမကျော်အောင် */
+    }
+    .report-table th {
+        white-space: normal !important;
+        vertical-align: middle !important;
+        line-height: 1.2 !important;
+    }
+}
+/* =========================================
+   High Contrast & Bold Text Fix
+   (စာလုံးများကို မဲမဲထင်ထင်ရှားရှား ဖြစ်စေရန်)
+   ==================================== */
+/* (၁) 00-99 ဇယားကွက် */
+.num-text {
+    color: #000000 !important;    /* ဂဏန်း (00, 01) ကို အမည်းရောင် ပြောင်းမည် */
+    font-weight: 900 !important;  /* အထူဆုံး (Extra Bold) */
+}
+.amt-text {
+    color: #c62828 !important;    /* ပမာဏကို အနီရင့်ရင့် (သွေးရောင်) ထားမည် */
+    font-weight: 900 !important;  /* အထူဆုံး */
+}
+/* (၂) Summary (Report) ဇယားကွက် */
+.report-table td {
+    color: #000000 !important;    /* စာရင်းများကို အမည်းရောင် ပြောင်းမည် */
+    font-weight: 900 !important;  /* အထူဆုံး */
+}
+/* (၃) Summary ဇယားမှ Customer နာမည်များ */
+.report-table td:first-child {
+    color: #1a237e !important;    /* နာမည်ကို အပြာရင့်ရင့် ထားမည် */
+    font-weight: 900 !important;
+}
+/* (၄) Summary ဇယားမှ Total/Net ဂဏန်းများ */
+.report-table td:nth-child(2), 
+.report-table td:nth-child(4) {
+    color: #000000 !important;    /* ငွေပမာဏများကို အမည်းစစ်စစ် ထားမည် */
+}
+/* =========================================
+   Ultra High Contrast Mode (မျက်စိအားနည်းသူများအတွက်)
+   ===================================== */
+/* (၁) တစ်မျက်နှာလုံးရှိ စာလုံးများကို အမည်းရောင် စစ်စစ်ထားမည် */
+body, h1, h2, h3, h4, span, div, label {
+    color: #000000 !important; 
+    font-weight: bold !important;
+}
+/* (၂) 00-99 ဇယား (ဂဏန်း - အမည်း၊ ပမာဏ - အနီရဲရဲ) */
+.num-text {
+    color: #000000 !important;    /* ဂဏန်း အမည်း */
+    font-weight: 900 !important;  /* အထူဆုံး */
+    font-size: 14px !important;   /* အနည်းငယ်ထပ်ကြီး */
+}
+.amt-text {
+    color: #d50000 !important;    /* အနီရောင် တောက်တောက် */
+    font-weight: 900 !important;
+    font-size: 14px !important;
+}
+/* (၃) အကွက်များ၊ ဘောင်များကို ထင်ရှားအောင် မျဉ်းအမည်းတားမည် */
+input, textarea, select, .tab, .data-table td, .report-table td, .report-table th {
+    border: 1px solid #555 !important; /* ဘောင်အမည်း */
+}
+/* (၄) စာရင်းသွင်းသည့် အကွက် (Input Area) */
+.input-area {
+    color: #000 !important;
+    background: #fff !important;
+    font-size: 20px !important; /* ရိုက်ထည့်တာ မြင်သာအောင် ကြီးပေးထားသည် */
+    border: 2px solid #000 !important;
+}
+/* (၅) အပေါ်ဆုံး စာရင်းချုပ် (Total/Net) */
+#overTotal, #overNet, #globalExportTotal {
+    color: #000000 !important;
+    text-shadow: 0px 0px 1px rgba(0,0,0,0.2); /* ပိုထင်းအောင် */
+}
+/* (၆) အမြတ် (Profit) ကို အစိမ်းရင့်ရောင် ထားမည် */
+#overProfit, .text-plus {
+    color: black !important; /* အစိမ်းရင့် (Dark Green) */
+}
+/* (၇) Report ဇယားကွက် */
+.report-table th {
+    background: #000 !important; /* ခေါင်းစဉ် နောက်ခံအမည်း */
+    color: #fff !important;      /* စာလုံးအဖြူ (Contrast) */
+}
+/* =========================================
+   🔥 မြင်သာထင်သာရှိအောင် ပြင်ဆင်ခြင်း 🔥
+   (Trial ရက်စွဲနှင့် ဇယားခေါင်းစဉ်များ)
+   ========================================
+/* (၁) Trial ရက်စွဲ (အပေါ်ဘက် ညာထောင့်) */
+#trialDisplayBadge {
+    font-size: 15px !important;   /* မူလ 12px မှ 15px သို့ ကြီးပါမည် */
+    font-weight: 900 !important;  /* အထူဆုံး (Extra Bold) ဖြစ်စေမည် */
+    color: #f39c12 !important;    /* လိမ္မော်ရောင် တောက်တောက် */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* အရိပ်နည်းနည်းထည့်ပြီး ပိုကြွစေမည် */
+}
+/* (၂) ဇယားကွက် ခေါင်းစဉ်များ (၃၄-၅၀၊ ၅၁-၆၇...) */
+.col-header {
+    font-size: 16px !important;   /* မူလ 14px မှ 16px သို့ ကြီးပါမည် */
+    font-weight: 900 !important;  /* အထူဆုံး */
+    color: #ffffff !important;    /* စာလုံးအဖြူ တောက်တောက် */
+    background: #2c3e50 !important; /* နောက်ခံ အပြာရင့် */
+    padding: 8px 5px !important;  /* အကွက်ကို အပေါ်အောက် နည်းနည်းချဲ့မည် */
+}
+
+    </style>
+<script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
+</head>
+<body>
+  <button onclick="openContact()" style="position:fixed; bottom:20px; right:20px; background:#0088cc; color:white; border:none; border-radius:50%; width:60px; height:60px; font-size:24px; box-shadow:0 4px 8px rgba(0,0,0,0.3); z-index:1000;">
+    📞
+</button>
+<style>
+@keyframes popUp {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+/* User Tab Scroll Bar ပြင်ဆင်ခြင်း */
+#userTabs {
+    overflow-x: auto;       /* ဘေးတိုက် Scroll ဖွင့်မယ် */
+    cursor: grab;          /* Mouse တင်ရင် လက်ပုံစံပြမယ် */
+    scrollbar-width: thin; /* Firefox အတွက် */
+    padding-bottom: 5px;   /* Scroll bar နဲ့ စာနဲ့ မကပ်အောင် */
+}
+
+/* Chrome/Safari အတွက် Scroll Bar အရောင် */
+#userTabs::-webkit-scrollbar {
+    height: 8px; /* အမြင့် */
+}
+#userTabs::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 4px;
+}
+#userTabs::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 4px;
+}
+#userTabs::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+#userTabs:active {
+    cursor: grabbing; /* ဆွဲနေတဲ့အချိန် လက်ဆုပ်ထားတဲ့ပုံ ပြမယ် */
+}
+/* Live Panel တစ်ခုလုံးအတွက် */
+.live-panel-container {
+  background: #CAEBDF !important; /* ပိုနက်တဲ့ အရောင်ပြောင်းထားပါတယ် */
+  border-radius: 8px;
+  margin: 10px;
+  padding: 15px;
+  border: 1px solid #334155;
+  color: #ffffff !important; /* စာသားအားလုံး အဖြူရောင် */
+}
+
+/* LIVE အချက်ပြမီးလုံးနှင့် စာသား */
+.live-indicator {
+  color: #f20505 !important; /* တောက်ပြောင်သော အစိမ်းရောင် */
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* အချိန်ပြစာသား */
+.last-update {
+  color: #94a3b8 !important; /* ခဲရောင်ဖျော့ */
+  font-size: 13px;
+}
+
+/* SET Index ခေါင်းစဉ် */
+.set-index-box .label { 
+  font-size: 12px; 
+  color: #cbd5e1 !important; /* ခဲရောင်ဖျော့ */
+  display: block;
+}
+
+/* SET Index ဂဏန်း */
+.set-index-box .value { 
+  font-size: 22px; 
+  font-weight: bold; 
+  color: #ffffff !important; /* အဖြူရောင်အကြည် */
+}
+
+/* 2D ဂဏန်းအကွက် */
+.live-2d-box {
+  background: #22c55e !important; /* အစိမ်းရောင်တောက်တောက် */
+  padding: 8px 25px;
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+}
+
+.number-2d {
+  font-size: 35px;
+  font-weight: bold;
+  color: #ffffff !important; /* အဖြူရောင် */
+}
+.live-data-row 

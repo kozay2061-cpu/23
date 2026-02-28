@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>လည်ဂျာ ပင်မစာမျက်နှာ</title>
+    <style>
+        body {
+            font-family: 'Pyidaungsu', 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .btn {
+            text-decoration: none;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.2s, background 0.3s;
+        }
+        .btn-2d {
+            background-color: #27ae60; /* အစိမ်းရောင် */
+        }
+        .btn-2d:hover {
+            background-color: #219150;
+            transform: translateY(-3px);
+        }
+        .btn-3d {
+            background-color: #2980b9; /* အပြာရောင် */
+        }
+        .btn-3d:hover {
+            background-color: #2471a3;
+            transform: translateY(-3px);
+        }
+        footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ရွေးချယ်ပါ</h1>
+    
+    <div class="menu-buttons">
+        <a href="2d.html" class="btn btn-2d">2D လည်ဂျာသို့ သွားရန်</a>
+        
+        <a href="3d.html" class="btn btn-3d">3D လည်ဂျာသို့ သွားရန်</a>
+    </div>
+
+    <footer>
+        © 2024 Ledger System All Rights Reserved.
+    </footer>
+</div>
+
+</body>
+</html>

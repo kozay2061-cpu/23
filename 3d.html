@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D Pro လည်ဂျာ (V15 Fixed)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* --- CSS Section: Polished UI --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', 'Pyidaungsu', sans-serif; }
+        body { background-color: #e9ecef; height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: row; }
+        
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; }
+            .left-panel { flex: none !important; height: 55vh !important; border-right: none !important; }
+            .right-panel { flex: none !important; height: auto !important; min-height: 45vh; }
+            .number-grid { grid-template-columns: repeat(5, 1fr) !important; }
+        }
+
+        /* Panels */
+        .left-panel { flex: 7; background: white; display: flex; flex-direction: column; border-right: 2px solid #ddd; height: 100%; overflow: hidden; }
+        .right-panel { flex: 3; background: #ecf0f1; display: flex; flex-direction: column; padding: 8px; height: 100%; position: relative; gap: 8px; overflow: hidden; }
+
+        /* Header Buttons */
+        .left-header { padding: 5px; background: #dfe6e9; border-bottom: 1px solid #bdc3c7; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; flex-shrink: 0; }
+        .btn-header { padding: 10px 2px; border: none; border-radius: 6px; color: white; font-size: 11px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-header:active { transform: scale(0.95); }
+        .btn-blue { background: #2980b9; } .btn-red { background: #c0392b; } .btn-dark { background: #34495e; }
+        .win-input { padding: 5px; border: 2px solid #f1c40f; border-radius: 6px; text-align: center; font-weight: bold; font-size: 16px; width: 100%; }
+
+        /* Tabs & Grid */
+        .grid-tabs { display: flex; background: #2c3e50; flex-shrink: 0; overflow-x: auto; }
+        .grid-tab-btn { flex: 1; padding: 12px 5px; background: none; border: none; color: #bdc3c7; cursor: pointer; font-weight: bold; font-size: 13px; border-right: 1px solid #34495e; transition: 0.2s; }
+        .grid-tab-btn.active { background: #3498db; color: white; }
+        
+        .number-grid { flex: 1; padding: 8px; overflow-y: auto; display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; align-content: start; }
+        .num-box { border: 1px solid #ddd; border-radius: 6px; padding: 6px 2px; text-align: center; background: #f8f9fa; cursor: pointer; position: relative; transition: 0.2s; }
+        .num-box:hover { background: #e9ecef; }
+        .num-box.has-data { background-color: #d4edda; border-color: #28a745; }
+        .num-box.winning { background-color: #f1c40f !important; border-color: #f39c12 !important; box-shadow: 0 0 8px #f1c40f; z-index: 5; }
+        .num-box.twat-highlight { background-color: #ffbe76 !important; border-color: #f0932b !important; color: #000 !important; box-shadow: 0 0 5px #ffbe76; }
+        .num-box.custom-limit-style { border: 2px dashed #e67e22 !important; }
+        .num-val { display: block; font-weight: bold; font-size: 13px; color: #333; }
+        .amt-val { display: block; color: #27ae60; font-size: 10px; font-weight: bold; }
+
+        /* Footer Buttons */
+        .left-footer { padding: 10px; background: #ecf0f1; border-top: 2px solid #ddd; display: flex; gap: 10px; flex-shrink: 0; }
+        .btn-footer { flex: 1; padding: 15px; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; font-size: 18px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); transition: 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-footer:active { transform: translateY(3px); box-shadow: none; }
+        .btn-save { background: #27ae60; } .btn-load { background: #f39c12; }
+
+        /* Status Bar (Right Panel) */
+        .status-area { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .status-bar { display: flex; gap: 5px; }
+        .status-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .status-col label { font-size: 11px; font-weight: bold; color: #7f8c8d; margin-bottom: 3px; white-space: nowrap; }
+        .status-col input { width: 100%; padding: 6px; text-align: center; border: 1px solid #ccc; border-radius: 6px; font-weight: bold; font-size: 14px; color: #2c3e50; }
+        .net-amount { font-size: 18px; font-weight: bold; }
+
+        /* Customer Tabs */
+        .customer-tabs { display: flex; overflow-x: auto; gap: 8px; padding: 5px 0; flex-shrink: 0; scrollbar-width: none; }
+        .customer-tabs::-webkit-scrollbar { display: none; }
+        .cust-tab { padding: 8px 18px; background: white; border: 1px solid #ddd; border-radius: 20px; white-space: nowrap; cursor: pointer; font-size: 13px; font-weight: bold; color: #555; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: 0.2s; }
+        .cust-tab.active { background: #3498db; color: white; border-color: #2980b9; }
+
+        /* User Bar & History */
+        .user-bar { display: flex; justify-content: space-between; align-items: center; background: #D6D3D1; padding: 10px 15px; border-radius: 8px; flex-shrink: 0; }
+        .user-name { font-weight: bold; font-size: 16px; color: #2c3e50; }
+        .settings-icon { font-size: 22px; cursor: pointer; border: none; background: none; transition: 0.3s; }
+        .settings-icon:hover { transform: rotate(45deg); }
+
+        .history-section { flex: 2; display: flex; flex-direction: column; background: white; border: 1px solid #ccc; border-radius: 8px; min-height: 120px; overflow: hidden; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 8px 12px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #eee; }
+        .history-list { flex: 1; overflow-y: auto; padding: 5px; }
+        .history-item { border-bottom: 1px solid #f1f1f1; padding: 10px; cursor: pointer; font-size: 14px; white-space: pre-wrap; line-height: 1.4; transition: 0.2s; }
+        .history-item:hover { background: #c0392b; }
+        .history-item.selected { background-color: #ffcccc; border-left: 5px solid #c0392b; font-weight: bold; }
+
+        /* Input Area */
+        .input-area { display: flex; gap: 6px; padding: 5px 0; align-items: flex-end; flex-shrink: 0; }
+        #mainInput { flex: 1; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; resize: none; height: 50px; overflow-y: auto; transition: 0.2s; outline: none; }
+        #mainInput:focus { border-color: #2980b9; box-shadow: 0 0 5px rgba(52, 152, 219, 0.3); }
+        #enterBtn { width: 70px; height: 50px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        #enterBtn:active { background: #27ae60; transform: scale(0.95); }
+
+        /* Sidebar & Modals */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; display: none; backdrop-filter: blur(2px); }
+        .settings-sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #B2EDEA; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .sidebar-active { right: 0; }
+        .close-btn { align-self: flex-end; font-size: 28px; border: none; background: none; cursor: pointer; color: #95a5a6; }
+        .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+        .modal-box { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-modal { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-modal-save { background: #27ae60; color: white; }
+        .btn-modal-cancel { background: #ecf0f1; color: #7f8c8d; }
+        .modal-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; margin-top: 10px; }
+                /* --- ⬇️ ဤအပိုင်းကို ရှာပြီး အစားထိုးပါ ⬇️ --- */
+        .bottom-section { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 5px; 
+            overflow: hidden; 
+            min-height: 0; /* ဤစာကြောင်းက အောက်က အကွက်တွေကို တွန်းမထုတ်အောင် တားပေးပါတယ် */
+        }
+
+        .history-section { 
+            flex: 1; /* flex: 2 အစား flex: 1 ပြောင်းလိုက်ပါ */
+            display: flex; 
+            flex-direction: column; 
+            background: white; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            min-height: 0; /* History ကို သူ့အထဲမှာပဲ scroll ဖြစ်စေပါတယ် */
+        }
+        #mainInput { 
+            flex: 1; 
+            padding: 12px; 
+            border: 2px solid #3498db; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            resize: none; 
+            height: 50px; 
+            max-height: 150px; /* ⬅️ စာရိုက်တဲ့အကွက် အရမ်းကြီးမလာအောင် ကန့်သတ်ချက် ထည့်ထားပါတယ် */
+            overflow-y: auto; 
+            transition: 0.2s; 
+            outline: none; 
+        }
+        #imageContainer img {display: block; margin: 0 auto; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+.pl-table { width: 100%; border-collapse: collapse; font-size: 12px; background: white; }
+.pl-table th, .pl-table td { border: 1px solid #ccc; padding: 8px 4px; text-align: center; }
+.pl-table th { background: #2c3e50; color: white; }
+.pl-table .total-row { background: #f1c40f; font-weight: bold; }
+        /* တွဒ်ကွက်များအတွက် အရောင် (လိမ္မော်ရောင်) */
+        .num-box.twat-highlight { 
+            background-color: #ffbe76 !important; 
+            border-color: #f0932b !important; 
+            color: #000 !important;
+            box-shadow: 0 0 5px #ffbe76;
+        }
+/* Modal အနောက်ခံ အမည်းရောင် */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+/* Modal Box အဖြူရောင် */
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+/* Scrollbar လှပစေရန် (Optional) */
+#historyListContainer::-webkit-scrollbar { width: 6px; }
+#historyListContainer::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+.main-content {
+    background-color: #ffffff; /* အလယ်အကွက်ကို အဖြူသီးသန့်ထားခြင်းဖြင့် ပိုပေါ်လွင်စေသည် */
+    box-shadow: 0 0 10px rgba(0,0,0,0.05); /* အရိပ်လေး ထည့်ပေးခြင်း */
+    border-radius: 8px;
+    padding: 15px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="left-panel">
+        <div class="left-header">
+            <input type="number" id="winInput" class="win-input" placeholder="Win" onkeyup="checkWin()">
+            <button class="btn-header btn-blue" onclick="copyUserCopy()">📜 User Copy</button>
+            <button class="btn-header btn-red" onclick="copyATinCopy()">📤 A Tin Copy</button>
+            <button class="btn-header btn-dark" onclick="exportImage()">📊 P/L (Img)</button>
+            <div style="background: #2c3e50; color: #f1c40f; padding: 2px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; border: 1px solid #f1c40f;">
+                <span style="font-size: 8px; color: #bdc3c7;">🌍 GRAND TOTAL</span>
+                <span id="grandTotalDisplay" style="font-size: 13px;">0</span>
+            </div>
+        </div>
+        <div class="grid-tabs" id="gridTabs"></div>
+        <div class="number-grid" id="numberContainer"></div>
+<!-- ပြင်ဆင်ထားသော left-footer အပိုင်း (ခလုတ်များကို အလယ်တွင်ထားရန်) -->
+<div class="left-footer" style="display: flex; justify-content: center; align-items: center; gap: 20px; padding: 10px 0; width: 100%;">
+    <!-- သိမ်းမည် ခလုတ် -->
+    <button class="btn-save" onclick="handleSaveData()" 
+            style="flex: 1; max-width: 200px; height: 45px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
+        <i class="fas fa-save" style="font-size: 18px;"></i> သိမ်းမည်
+    </button>
+    <!-- မှတ်တမ်း ခလုတ် -->
+    <button class="btn-history" onclick="viewHistory()" 
+            style="flex: 1; max-width: 200px; height: 45px; background: #f39c12; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
+        <i class="fas fa-folder-open" style="font-size: 18px;"></i> မှတ်တမ်း
+    </button>
+    
+  </div>
+</div>
+
+    <div class="right-panel">
+        <div class="status-area">
+            <div class="status-bar">
+                <div class="status-col">
+                    <label>⛔ Limit</label>
+                    <div style="display:flex; align-items:center; gap:4px; width:100%;">
+                        <input type="number" id="mainLimit" value="500" onchange="refreshCalculations()">
+                        <div style="display:flex; align-items:center; gap:2px; background:#f8f9fa; padding:4px; border-radius:4px; border:1px solid #ddd; cursor:pointer;" onclick="toggleRatio()">
+                            <input type="checkbox" id="globalRatioCheck" onchange="refreshCalculations()" style="width:14px; height:14px;">
+                            <label for="globalRatioCheck" style="font-size:9px; margin:0; cursor:pointer;">အချိုးကျ</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="status-col" style="border-left: 1px solid #eee;">
+                    <label>📉 Max Risk (Worst Case)</label>
+                    <div class="net-amount" id="profitAndLossDisplay" style="color:#e74c3c;">0</div>
+                </div>
+            </div>
+            <div class="status-bar" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #f1f1f1;">
+                <div class="status-col"><label style="color:#95a5a6;">💰 Gross</label><div class="net-amount" id="totalAmountDisplay" style="color:#7f8c8d; font-size: 16px;">0</div></div>
+                <div class="status-col" style="border-left: 1px solid #eee;"><label style="color:#2980b9;">📥 Kept</label><div class="net-amount" id="keptAmountDisplay" style="color:#2980b9; font-size: 16px;">0</div></div>
+                <div class="status-col" style="border-left: 1px solid #eee;"><label style="color:#27ae60;">💵 Net</label><div class="net-amount" id="netAmountDisplay" style="color:#27ae60; font-size: 16px;">0</div></div>
+            </div>
+        </div>
+
+        <div class="customer-tabs" id="customerTabs"></div>
+        <div class="user-bar"><span class="user-name" id="displayUserName"></span><button class="settings-icon" onclick="toggleSidebar()">⚙️</button>
+        <!-- Help Modal ကို ဖွင့်မည့် ခလုတ် (ဥပမာ - Input Box ၏ ဘေးတွင်) -->
+        <button onclick="document.getElementById('helpModal').style.display='flex'" 
+        title="အသုံးပြုနည်း လမ်းညွှန်"
+        style="background: #FEF3C6; color: white; border: none; border-radius: 4px; padding: 10px 15px; cursor: pointer; margin-left: 5px; font-size: 16px;">
+    <i class="fas fa-question-circle"></i>❓</button>
+
+        </div>
+        
+        <div class="bottom-section">
+<div class="history-section">
+    <div class="history-header" style="background-color: #FEE685; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-weight: bold; font-size: 14px;">History</span>
+        
+        <!-- (အသစ်) အနီရောင် ပြောင်းထားသော Del Selected ခလုတ် -->
+        <button class="btn-trash" onclick="deleteSelected()" 
+                style="background-color: #e74c3c; color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(231,76,60,0.3);">
+            🗑️ Del Selected
+        </button>
+    </div>
+        <!-- (အသစ်တိုးလိုက်သော Search Box) -->
+        <div style="padding: 5px 10px; background: #E1E5E5; border-bottom: 1px solid #eee;">
+            <input type="text" id="historySearch" placeholder="🔍 ရှာရန် (ဥပမာ - 123)..." 
+                   oninput="renderHistoryLog()" 
+                   style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+        </div>
+
+        <div class="history-list" id="historyLog"></div>
+    </div>
+
+    <div class="input-area">
+        <textarea id="mainInput" placeholder="Enter commands (e.g. 123 1000 r 500)"></textarea>
+        <button id="enterBtn" onclick="processInput()">Enter</button>
+    </div>
+</div>
+<!-- အကူအညီ (Help) Modal Box -->
+<div id="helpModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="width: 600px; max-width: 95%; max-height: 85vh; display: flex; flex-direction: column;">
+        
+        <!-- ခေါင်းစဉ်ပိုင်း -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3498db; padding-bottom: 12px; margin-bottom: 15px;">
+            <h3 style="margin: 0; color: #2c3e50; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-question-circle" style="color: #3498db; font-size: 22px;"></i> အသုံးပြုနည်း လမ်းညွှန်
+            </h3>
+            <button onclick="document.getElementById('helpModal').style.display='none'" 
+                    style="background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d; padding: 0 5px;">
+                &times;
+            </button>
+        </div>
+
+        <!-- အကြောင်းအရာများ (Scroll ပါမည်) -->
+        <div style="flex: 1; overflow-y: auto; padding-right: 10px; font-size: 14px; line-height: 1.6; color: #444;">
+            
+            <div style="background: #e8f4f8; padding: 12px; border-left: 4px solid #3498db; border-radius: 4px; margin-bottom: 15px;">
+                <strong style="color: #2980b9;">💡 အခြေခံ ရိုက်သွင်းနည်းများ</strong><br>
+                ဂဏန်းနှင့် ငွေပမာဏကြားတွင် Space (သို့) <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">-</code>, <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">*</code>, <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">/</code>, <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">.</code> ခံ၍ ရိုက်နိုင်သည်။ မြန်မာ/အင်္ဂလိပ် နှစ်မျိုးလုံး ရိုက်နိုင်သည်။<br>
+                <span style="color: #666; font-size: 13px;">ဥပမာ - <b>123 500</b> (သို့) <b>၁၂၃-၅၀၀</b> (၁၂၃ ဒဲ့ ၅၀၀ ဖိုး)</span>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tbody>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px 0; width: 120px;"><strong>🔄 အာ (Round)</strong></td>
+                        <td style="padding: 10px 0;">ဂဏန်းနောက်တွင် <b>r</b> (သို့) <b>အာ</b> ထည့်ပါ။<br>
+                            <span style="color: #666; font-size: 13px;">ဥပမာ - <b>123r 500</b> (သို့) <b>၁၂၃ အာ ၅၀၀</b></span>
+                        </td>
+           
