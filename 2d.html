@@ -2,7 +2,7 @@
 <html lang="my">
 <head>
     <meta charset="UTF-8">
-    <title>2D လည်ဂျာ V.32.3 </title>
+    <title>2D လည်ဂျာ V.22.2 </title>
     <link rel="icon" href="https://i.ibb.co/6ckfFrqw/Gemini-Generated-Image-nlrzqsnlrzqsnlrz-1-1-1.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -411,74 +411,6 @@ input, textarea, select, .tab, .data-table td, .report-table td, .report-table t
 #userTabs:active {
     cursor: grabbing; /* ဆွဲနေတဲ့အချိန် လက်ဆုပ်ထားတဲ့ပုံ ပြမယ် */
 }
-/* Live Panel တစ်ခုလုံးအတွက် */
-.live-panel-container {
-  background: #CAEBDF !important; /* ပိုနက်တဲ့ အရောင်ပြောင်းထားပါတယ် */
-  border-radius: 8px;
-  margin: 10px;
-  padding: 15px;
-  border: 1px solid #334155;
-  color: #ffffff !important; /* စာသားအားလုံး အဖြူရောင် */
-}
-
-/* LIVE အချက်ပြမီးလုံးနှင့် စာသား */
-.live-indicator {
-  color: #f20505 !important; /* တောက်ပြောင်သော အစိမ်းရောင် */
-  font-weight: bold;
-  font-size: 14px;
-}
-
-/* အချိန်ပြစာသား */
-.last-update {
-  color: #94a3b8 !important; /* ခဲရောင်ဖျော့ */
-  font-size: 13px;
-}
-
-/* SET Index ခေါင်းစဉ် */
-.set-index-box .label { 
-  font-size: 12px; 
-  color: #cbd5e1 !important; /* ခဲရောင်ဖျော့ */
-  display: block;
-}
-
-/* SET Index ဂဏန်း */
-.set-index-box .value { 
-  font-size: 22px; 
-  font-weight: bold; 
-  color: #ffffff !important; /* အဖြူရောင်အကြည် */
-}
-
-/* 2D ဂဏန်းအကွက် */
-.live-2d-box {
-  background: #22c55e !important; /* အစိမ်းရောင်တောက်တောက် */
-  padding: 8px 25px;
-  border-radius: 6px;
-  box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
-}
-
-.number-2d {
-  font-size: 35px;
-  font-weight: bold;
-  color: #ffffff !important; /* အဖြူရောင် */
-}
-.live-data-row {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin-top: 10px;
-}
-.data-item { text-align: left; }
-.label { font-size: 12px; color: #cbd5e1; display: block; }
-.val-text { font-size: 18px; font-weight: bold; color: #ffffff; }
-.win-number-box {
-  background: #22c55e;
-  padding: 5px 15px;
-  border-radius: 8px;
-  min-width: 60px;
-  text-align: center;
-}
-.big-2d { font-size: 32px; font-weight: bold; color: white; }
-
 </style>
   
 <input type="file" id="fileInput" accept="*/*" style="display: none;" onchange="handleFileUpload(this)">
@@ -686,27 +618,6 @@ input, textarea, select, .tab, .data-table td, .report-table td, .report-table t
         <button onclick="$('helpModal').style.display='none'" style="width:100%; padding:12px; background:#1a73e8; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:5px;">(Close)</button>
     </div>
     </div>
-<div class="live-panel-container">    
-  <div class="live-header"> 
-    <span class="live-indicator"><span class="dot"></span> LIVE</span>
-    <span id="live-time" class="last-update">--:--:--</span>
-  </div>
-  
-  <div class="live-data-row">
-    <div class="data-item">
-      <span class="label">SET</span>
-      <span id="set-val" class="val-text">0000.00</span>
-    </div>
-    <div class="data-item">
-      <span class="label">VALUE</span>
-      <span id="value-val" class="val-text">0000.00</span>
-    </div>
-    <div class="win-number-box">
-      <span id="live-2d-val" class="big-2d">00</span>
-    </div>
-  </div>
-</div>
-
     <div style="border-top: 1px solid #bbdefb; margin-bottom: 1px; text-align: center; margin-top: 5px; background: #05FF2A; font-size:18px; colour: #04C220; font-weight: bold; white-space: nowrap; border-radius: 8px;">
     Grand Total: <span id="grandTotalDisplay">0</span>
 </div>
@@ -1608,6 +1519,7 @@ if (!settings.customLimits) settings.customLimits = {};
         alert("✅ " + name + " အဖြစ် သိမ်းဆည်းပြီးပါပြီ။");
         openArchiveModal(); 
     }
+    // (၂) သိမ်းထားသော စာရင်းများကို ဖွင့်ကြည့်မည်
   function openArchiveModal() {
         let archives = JSON.parse(localStorage.getItem('2d_archives')) || [];
         let listHtml = "";
@@ -1636,6 +1548,7 @@ if (!settings.customLimits) settings.customLimits = {};
         document.getElementById('archiveList').innerHTML = listHtml;
         document.getElementById('archiveModal').style.display = 'flex';
  }
+     // (၃) ပြန်ဖွင့်မည် (Load)
   function loadArchive(id) {
         if(!confirm("⚠️ သတိပေးချက်:\nလက်ရှိရိုက်ထားသော စာရင်းများ ပျက်သွားပြီး၊ ရွေးချယ်သော စာရင်းကို အစားထိုးပါမည်။ ဆက်လုပ်မလား?")) return;
 
@@ -1738,10 +1651,7 @@ if (!settings.customLimits) settings.customLimits = {};
         let finalText = `📅 ${new Date().toLocaleDateString()} (${targetName})\n------------------\n${historyLines || "(စာရင်းမရှိပါ)\n"}------------------\nTotal: ${totalAmt.toLocaleString()}`;
         copyToClipboard(finalText);
     }
-    // ====================================
-// ⚠️ Over Button (အတင်စာရင်း ကူးယူရန် Function - Updated Sort)
-// ========================================
-// --- (၁) အတင်စာရင်း Data တွက်ချက်ပေးမည့် Function (Common Helper) ---
+
   function getExportDataList() {
     let all = getOriginalTotals();
     const preToggle = document.getElementById('preLimitToggle');
@@ -1786,8 +1696,7 @@ if (!settings.customLimits) settings.customLimits = {};
     
     return { exportData, currentSort };
 }
-// --- (၂) ပုံမှန် အတင်စာရင်း (၁ ပိုင်းတည်း) Copy ကူးရန် Function ---
-// ဒီ Function ကို မူလ Copy ခလုတ်မှာ သုံးပါ
+
   function copyOverLimitText() {
     let { exportData, currentSort } = getExportDataList();
     
@@ -1809,8 +1718,7 @@ if (!settings.customLimits) settings.customLimits = {};
         alert("⚠️ အတင်မရှိပါ (No Export)");
     }
 }
-// --- (၃) နှစ်ပိုင်းခွဲ၍ အတင်စာရင်း Copy ကူးရန် Function ---
-// ဒီ Function ကို နှစ်ပိုင်းခွဲမည့် ခလုတ်အသစ်မှာ သုံးပါ
+
   function copySplitOverLimitText() {
     let { exportData, currentSort } = getExportDataList();
     
@@ -1872,6 +1780,7 @@ if (!settings.customLimits) settings.customLimits = {};
         alert("⚠️ အတင်မရှိပါ (No Export)");
     }
 }
+
   function processInput() {
     const field = $('rawInput'); 
     if (!field.value.trim() || activeIndex === -1) return;
@@ -1886,44 +1795,53 @@ if (!settings.customLimits) settings.customLimits = {};
         if (!rawLine.trim()) continue;
         let line = uniToEng(rawLine.toLowerCase());
         
-        // =============================================
-        // 🧹 Garbage Cleaning (မဆိုင်သောစာများ သန့်ရှင်းရေး)
-        // =============================================
         line = line.replace(/အစ်ကို|ညီလေး|ဆရာ|ကို|ဦး|ဒေါ်|ဗျာ|ခင်ဗျာ|ရှင့်|နော်|ok|help|plz|hi|hello|mingalarpar/g, ' ');
         line = line.replace(/မနက်|ညနေ|နေ့လည်|နံ|နံက်|ည|morning|evening|am|pm/g, ' ');
+
         line = line.replace(/ကျေးဇူး|တင်ပါတယ်|ရလား|ရမလား|လုပ်ပေးပါ|ထိုးမယ်|ပို|ဆို|ထဲက|သီးသန့်|အပြီး|စီး/g, ' ');
         line = line.replace(/ဒဲ့(?!ကပ်|k)/g, ' '); 
         line = line.replace(/တည့်/g, ' ');
-        
-        // =============================================
-        // Keyword များကို Standard ပြောင်းခြင်း
-        // =============================================
         line = line.replace(/[=\/\*\-\.\+]/g, ' '); 
+        line = line.replace(/ပတ်ရှင်း|ဒေးလီး|အပတ်ရှင်း|အပါတ်ရှင်း/g, ' ');
+
+        // 🛑 [အရေးကြီး] စကားလုံးအရှည်တွေကို အရင် Replace လုပ်ပါ 🛑
+        line = line.replace(/နတ္ခတ်|နက္ခတ်|နခ|နတ်ခက်|နက်ခတ်|နက်ခက်|နတ်ခတ်/g, 'nk');
+        line = line.replace(/ပါဝါ|ပဝ|power/g, 'pw');
+        line = line.replace(/ညီအစ်ကို|ညီအကို|ညီကို|ညက|bro|br/g, 'bro')
+              .replace(/စုံထိပ်|စထ/g, 'sh')
+              .replace(/မထိပ်|မထ/g, 'mh')
+              .replace(/စုံနောက်|စန/g, 'st')
+              .replace(/မနောက်|မန/g, 'mt');
+              
+        line = line.replace(/အပူး၁၀ကွက်|အပူး10ကွက်|အပူး|အပ|ပူး/g, 'ap')
+             .replace(/ဒဲ့ကပ်|ကပ်/g, 'dk')
+             .replace(/ထိပ်စီး|ထိပ်|ထ/g, 'h');
+
+        // 🛑 ပြီးမှ စာလုံးအတိုတွေကို နောက်မှ Replace လုပ်ပါ 🛑
         line = line.replace(/ခွေ\s*(.*?)\s*အပူး(?:ပါ)?/g, 'kp $1')
             .replace(/kအပူးပါ|အပူးပါခွေ|ခွေအပူးပါ|ခွေp|ခွေa|ခွေပူး|ခပ|ka/g, 'kp');
-        line = line.replace(/ပတ်ရှင်း|ဒေးလီး|အပတ်ရှင်း|အပါတ်ရှင်း/g, ' ');
-        line = line.replace(/အပါ|ပတ်သီး|ပါတ်|ပတ်|ပါ/g, 'p') 
-             .replace(/ခွေ|ခ/g, 'k').replace(/စုံစုံ/g, 'ss')
-             .replace(/အာ|@|©|®/g, 'r').replace(/မမ/g, 'mm').replace(/စုံမ|စမ/g, 'sm')
-             .replace(/မစုံ|မစ/g, 'ms').replace(/ကြီးကြီး/g, 'kk').replace(/ငယ်ငယ်|သေး/g, 'nn')
-             .replace(/ကြီးငယ်|ကြီးသေး/g, 'kn').replace(/ငယ်ကြီး|သေးကြီး/g, 'ng')
-             .replace(/ညီအစ်ကို|ညီကို|ညက|bro|br/g, 'bro').replace(/စုံထိပ်|စထ/g, 'sh')
-             .replace(/မထိပ်|မထ/g, 'mh').replace(/စုံနောက်|စန/g, 'st').replace(/ပါဝါ|ပဝ|power/g, 'pw')
-             .replace(/နက္ခတ်|နခ|နတ်ခက်|နက်ခတ်|နက်ခက်|နတ်ခတ်/g, 'nk')
-             .replace(/အပူး၁၀ကွက်|အပူး10ကွက်|အပူး|အပ|ပူး/g, 'ap')
-             .replace(/ဒဲ့ကပ်|ကပ်/g, 'dk').replace(/မနောက်|မန/g, 'mt').replace(/ထိပ်စီး|ထိပ်|ထ/g, 'h');
+        line = line.replace(/အပါ|ပတ်သီး|ပါတ်|ပတ်|ပါ/g, 'p'); 
+        line = line.replace(/ခွေ|ခ/g, 'k').replace(/စုံစုံ/g, 'ss');
+        
+        line = line.replace(/အာ|@|©|®/g, 'r');
+        line = line.replace(/မမ/g, 'mm').replace(/စုံမ|စမ/g, 'sm');
+        line = line.replace(/မစုံ|မစ/g, 'ms')
+              .replace(/ကြီးကြီး/g, 'kk').replace(/ငယ်ငယ်|သေး/g, 'nn')
+             .replace(/ကြီးငယ်|ကြီးသေး/g, 'kn')
+             .replace(/ငယ်ကြီး|သေးကြီး/g, 'ng');
 
         line = line.replace(/nk/g, 'NK').replace(/kn/g, 'KN').replace(/ng/g, 'NG').replace(/nn/g, 'NN');
-        line = line.replace(/နောက်ပိတ်|ပိတ်|နောက်|န|n/g, 't');
+        line = line.replace(/နောက်ပိတ်|ပိတ်|နောက်|ပ|န|n/g, 't');
         line = line.replace(/ဘရိတ်|ဘရ|ဘ|break|bk/g, 'b')
              .replace(/[။၊]/g, ' '); 
+             
+        // ... (အောက်ပိုင်းက အတူတူပဲ ဆက်သွားပါမည်) ...
+
 
         let trim = line.trim();
         if (!trim) continue;
         trim = trim.replace(/,/g, ' ');
 
-        // 🔥🔥🔥 အသစ်ထည့်သွင်းထားသော (Duplicate Check) အပိုင်း 🔥🔥🔥
-        // History ထဲမှာ ဒီနေ့ရက်စွဲနဲ့ ဒီစာကြောင်း အတိအကျ ဝင်ပြီးသားလား စစ်ဆေးပါမည်
         if (customers[activeIndex] && customers[activeIndex].history) {
             let isAlreadyEntered = customers[activeIndex].history.some(h => h.text === trim && h.date === todayDate);
             
@@ -2066,6 +1984,7 @@ if (!settings.customLimits) settings.customLimits = {};
         field.value = ""; 
     }
 }
+
   function processStandardCommands(line, matches) {
     // English Shortcut များ
     const SHORTCUT_LISTS = { 
@@ -2076,7 +1995,7 @@ if (!settings.customLimits) settings.customLimits = {};
     };
     // Myanmar Shortcut Mapping
     const MM_MAP = {
-        'နက္ခတ်': 'nk', 'နခ': 'nk', 'နက်ခတ်': 'nk',
+        'နတ္ခတ်': 'nk', 'နက္ခတ်': 'nk', 'နတ္ခက်': 'nk',  'နက္ခက်': 'nk', 'နက်ခတ်': 'nk', 'နက်ခက်': 'nk', 'နခ': 'nk', 'နတ်ခတ်': 'nk', 'နတ်ခက်': 'nk', 
         'ပါဝါ': 'pw', 'ပဝ': 'pw',
         'ညီအစ်ကို': 'bro', 'ညီကို': 'bro', 'ညီအကို': 'bro',
         'အပူး': 'ap', 'အပ': 'ap', 'ပူး': 'ap',
@@ -2299,6 +2218,7 @@ if (!settings.customLimits) settings.customLimits = {};
 
     alert("✅ Win Number အပါအဝင် ဒေတာအားလုံး ရှင်းလင်းပြီးပါပြီ။");
 }
+
   function showCurrentDateTime() {
     const now = new Date();
     // ရက်စွဲ Format (ဥပမာ - 13/01/2026)
@@ -3334,6 +3254,7 @@ function displayMonthlyReport() {
 
     alert("📅 ယခုလ စာရင်းချုပ်\n------------------------\nစုစုပေါင်း ရောင်းရငွေ: " + monthlyTotal.toLocaleString() + "\nအသားတင် အမြတ်: " + monthlyProfit.toLocaleString());
 }
+
 // ဇယားဖြင့် ပြသရန် (Option 3 အတွက်)
   function showHistoryTable(records) {
     var msg = "📂 သိမ်းဆည်းထားသော စာရင်းများ:\n";
@@ -3961,68 +3882,6 @@ function closeHistoryModal() {
     // ၄။ Clipboard သို့ ကူးယူခြင်း
     copyToClipboard(finalText);
     alert("ငွေပမာဏကို တစ်ဝက်စီခွဲ၍ အပိုင်း (၁) နှင့် (၂) အဖြစ် Copy ကူးပြီးပါပြီ။");
-}
-// Data လှမ်းယူမည့် function
-async function updateLiveDisplay() {
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz9A-NR5PeLNwueWfEkUHWOiqwWqbmPK0NIIVoUshN8YbihKDOM-HbiRVaBWsU-yUu4aw/exec"; 
-
-  try {
-    const response = await fetch(WEB_APP_URL);
-    const data = await response.json();
-    
-    // (၁) အောင်မြင်စွာ Data ရရှိခဲ့လျှင် (live အပိုင်းကို ယူပါမည်)
-    if (data.status === "success") {
-      document.getElementById("set-val").innerText = data.live.set;
-      document.getElementById("value-val").innerText = data.live.value;
-      document.getElementById("live-2d-val").innerText = data.live["2d"];
-      document.getElementById("live-time").innerText = "Update: " + data.live.time;
-
-      // (၂) ဖြည့်စွက်ချက် - မနက်ပိုင်း / ညနေပိုင်း ထွက်ဂဏန်းများကို ပြသလိုပါက
-      // (HTML ထဲတွင် ID များ ဖန်တီးထားရန် လိုအပ်ပါသည်)
-      // document.getElementById("morning-2d-val").innerText = data.morning["2d"];
-      // document.getElementById("evening-2d-val").innerText = data.evening["2d"];
-      
-      console.log("Live Updated: ", data.live["2d"]);
-    }
-    
-  } catch (error) { 
-    console.log("Error fetching data:", error); 
-    document.getElementById("live-time").innerText = "Connecting...";
-  }
-}
-
-// ၅ စက္ကန့်တစ်ခါ Update လုပ်ရန်
-setInterval(updateLiveDisplay, 5000);
-// စစချင်း တစ်ခါ Run ရန်
-updateLiveDisplay();
-
-function doGet() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  
-  var result = {
-    "status": "success",
-    "live": {
-      "time": sheet.getRange("A1").getValue(),
-      "set": sheet.getRange("B1").getValue(),
-      "value": sheet.getRange("C1").getValue(),
-      "2d": sheet.getRange("D1").getValue()
-    },
-    "morning": {
-      "time": sheet.getRange("A4").getValue() || "Waiting...",
-      "set": sheet.getRange("B4").getValue() || "-",
-      "value": sheet.getRange("C4").getValue() || "-",
-      "2d": sheet.getRange("D4").getValue() || "--"
-    },
-    "evening": {
-      "time": sheet.getRange("A5").getValue() || "Waiting...",
-      "set": sheet.getRange("B5").getValue() || "-",
-      "value": sheet.getRange("C5").getValue() || "-",
-      "2d": sheet.getRange("D5").getValue() || "--"
-    }
-  };
-
-  return ContentService.createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON);
 }
 
 </script>
