@@ -3,23 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>3D Pro လည်ဂျာ (V15 Fixed)</title>
+    <title>3D လည်ဂျာ (V15 Fixed)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* --- CSS Section: Polished UI --- */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', 'Pyidaungsu', sans-serif; }
-        body { background-color: #e9ecef; height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: row; }
+        /* --- CSS Section: ပုံ ၂ အတိုင်း အပေါ်အောက် ပုံစံပြောင်းလဲထားခြင်း --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', 'Pyidaungsu', sans-serif; }
         
-        @media (max-width: 768px) {
-            body { flex-direction: column; overflow-y: auto; }
-            .left-panel { flex: none !important; height: 55vh !important; border-right: none !important; }
-            .right-panel { flex: none !important; height: auto !important; min-height: 45vh; }
-            .number-grid { grid-template-columns: repeat(5, 1fr) !important; }
+        body { 
+            background-color: #e9ecef; 
+            min-height: 100vh; 
+            min-height: 100dvh; 
+            overflow-y: auto; /* ပုံ ၂ အတိုင်း စာမျက်နှာကို အောက်သို့ Scroll ဆွဲကြည့်နိုင်ရန် */
+            padding: 8px;      /* ဘေးဘောင်လေးတွေ ကပ်မနေအောင် ခွာပေးထားခြင်း */
+            display: flex;
+            justify-content: center;
         }
 
-        /* Panels */
-        .left-panel { flex: 7; background: white; display: flex; flex-direction: column; border-right: 2px solid #ddd; height: 100%; overflow: hidden; }
-        .right-panel { flex: 3; background: #ecf0f1; display: flex; flex-direction: column; padding: 8px; height: 100%; position: relative; gap: 8px; overflow: hidden; }
+        /* ပင်မဗူးကို ဖုန်း screen အတိုင်း အလယ်မှာ စုစုစည်းစည်း ဖြစ်နေစေရန် */
+.main-container {
+    width: 100% !important;
+    max-width: 100% !important; /* အကျယ်ကို ရာခိုင်နှုန်းအပြည့် ယူခိုင်းလိုက်တာပါ */
+    padding: 6px !important;    /* ဘယ်ညာ ကွက်လပ်တွေကို 6px ထိ ကျဉ်းမြောင်းပေးလိုက်ပါတယ် */
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+        /* ပုံ ၂ ထဲကအတိုင်း ဖုန်းပေါ်မှာကြည့်ရင်လည်း ၁၀ ကွက်စီ (0-9) အပြည့် ပေါ်နေစေရန် */
+        .number-grid { 
+            flex: 1; 
+            padding: 8px; 
+            overflow-y: auto; 
+            display: grid; 
+            grid-template-columns: repeat(10, 1fr) !important; /* ၁၀ ကွက်တွဲ အမြဲဖြစ်နေစေရန် */
+            gap: 4px; 
+            align-content: start; 
+        }
 
         /* Header Buttons */
         .left-header { padding: 5px; background: #dfe6e9; border-bottom: 1px solid #bdc3c7; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; flex-shrink: 0; }
@@ -43,8 +63,6 @@
         .num-val { display: block; font-weight: bold; font-size: 13px; color: #333; }
         .amt-val { display: block; color: #27ae60; font-size: 10px; font-weight: bold; }
 
-        /* Footer Buttons */
-        .left-footer { padding: 10px; background: #ecf0f1; border-top: 2px solid #ddd; display: flex; gap: 10px; flex-shrink: 0; }
         .btn-footer { flex: 1; padding: 15px; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; font-size: 18px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); transition: 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-footer:active { transform: translateY(3px); box-shadow: none; }
         .btn-save { background: #27ae60; } .btn-load { background: #f39c12; }
@@ -77,8 +95,28 @@
         .history-item.selected { background-color: #ffcccc; border-left: 5px solid #c0392b; font-weight: bold; }
 
         /* Input Area */
-        .input-area { display: flex; gap: 6px; padding: 5px 0; align-items: flex-end; flex-shrink: 0; }
-        #mainInput { flex: 1; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; resize: none; height: 50px; overflow-y: auto; transition: 0.2s; outline: none; }
+#mainInput { 
+    flex: 1 !important; 
+    padding: 12px !important; 
+    border: 2px solid #3498db !important; 
+    border-radius: 8px !important; 
+    font-size: 16px !important; 
+    resize: none !important; 
+    height: 150px !important;   /* !important ထည့်လိုက်ရင် သူက အတင်းပြောင်းခိုင်းတာပါ */
+    min-height: 150px !important; /* အနည်းဆုံး အမြင့်ကိုပါ သတ်မှတ်လိုက်တာပါ */
+    overflow-y: auto !important; 
+    outline: none !important; 
+}
+
+.input-area { 
+    display: flex !important; 
+    gap: 6px !important; 
+    padding: 8px 0 !important; 
+    align-items: flex-start !important; 
+    height: auto !important;    /* အပြင်ဘောင်ကို height ပုံသေမထားပါနဲ့ */
+    flex-shrink: 0 !important; 
+}
+
         #mainInput:focus { border-color: #2980b9; box-shadow: 0 0 5px rgba(52, 152, 219, 0.3); }
         #enterBtn { width: 70px; height: 50px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
         #enterBtn:active { background: #27ae60; transform: scale(0.95); }
@@ -165,100 +203,129 @@
     border-radius: 8px;
     padding: 15px;
 }
+/* Limit အကွက်နှင့် စာသားများ ကြီးရန် */
+.status-area {
+    font-size: 18px !important; /* စာလုံးအရွယ်အစားကို ၁၈ အထိ တိုးလိုက်ပါတယ် */
+}
+
+.status-area input[type="text"], 
+.status-area input[type="number"] {
+    font-size: 20px !important;  /* ဂဏန်းရိုက်ထည့်မယ့် Input Box ထဲကစာလုံးကို ပိုကြီးပေးတာပါ */
+    font-weight: bold;
+    height: 40px !important;
+}
+
+/* "အချိုးကျ" ဆိုတဲ့ စာလုံးနှင့် Checkbox ကြီးရန် */
+.status-area label {
+    font-size: 18px !important; 
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.status-area input[type="checkbox"] {
+    width: 20px;  /* Checkbox အကွက်လေးကိုပါ လိုက်ကြီးပေးတာပါ */
+    height: 20px;
+}
+
+/* Gross, Kept, Net စာသားများပါ လိုက်ကြီးရန် */
+.status-area .stats-grid, 
+.status-area div {
+    font-size: 16px !important; 
+}
+
+.status-area strong, 
+.status-area span {
+    font-size: 18px !important; /* ဂဏန်းတန်ဖိုးတွေကို ပိုထင်ရှားစေရန် */
+}
 
     </style>
 </head>
 <body>
-    <div class="left-panel">
-        <div class="left-header">
-            <input type="number" id="winInput" class="win-input" placeholder="Win" onkeyup="checkWin()">
-            <button class="btn-header btn-blue" onclick="copyUserCopy()">📜 User Copy</button>
-            <button class="btn-header btn-red" onclick="copyATinCopy()">📤 A Tin Copy</button>
-            <button class="btn-header btn-dark" onclick="exportImage()">📊 P/L (Img)</button>
-            <div style="background: #2c3e50; color: #f1c40f; padding: 2px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; border: 1px solid #f1c40f;">
-                <span style="font-size: 8px; color: #bdc3c7;">🌍 GRAND TOTAL</span>
-                <span id="grandTotalDisplay" style="font-size: 13px;">0</span>
-            </div>
-        </div>
-        <div class="grid-tabs" id="gridTabs"></div>
-        <div class="number-grid" id="numberContainer"></div>
-<!-- ပြင်ဆင်ထားသော left-footer အပိုင်း (ခလုတ်များကို အလယ်တွင်ထားရန်) -->
-<div class="left-footer" style="display: flex; justify-content: center; align-items: center; gap: 20px; padding: 10px 0; width: 100%;">
-    <!-- သိမ်းမည် ခလုတ် -->
-    <button class="btn-save" onclick="handleSaveData()" 
-            style="flex: 1; max-width: 200px; height: 45px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
-        <i class="fas fa-save" style="font-size: 18px;"></i> သိမ်းမည်
-    </button>
-    <!-- မှတ်တမ်း ခလုတ် -->
-    <button class="btn-history" onclick="viewHistory()" 
-            style="flex: 1; max-width: 200px; height: 45px; background: #f39c12; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
-        <i class="fas fa-folder-open" style="font-size: 18px;"></i> မှတ်တမ်း
-    </button>
-    
-  </div>
-</div>
+<div class="main-container">
 
-    <div class="right-panel">
-        <div class="status-area">
-            <div class="status-bar">
-                <div class="status-col">
-                    <label>⛔ Limit</label>
-                    <div style="display:flex; align-items:center; gap:4px; width:100%;">
-                        <input type="number" id="mainLimit" value="500" onchange="refreshCalculations()">
-                        <div style="display:flex; align-items:center; gap:2px; background:#f8f9fa; padding:4px; border-radius:4px; border:1px solid #ddd; cursor:pointer;" onclick="toggleRatio()">
-                            <input type="checkbox" id="globalRatioCheck" onchange="refreshCalculations()" style="width:14px; height:14px;">
-                            <label for="globalRatioCheck" style="font-size:9px; margin:0; cursor:pointer;">အချိုးကျ</label>
-                        </div>
+    <div class="left-header">
+        <input type="number" id="winInput" class="win-input" placeholder="Win" onkeyup="checkWin()">
+        <button class="btn-header btn-blue" onclick="copyUserCopy()">📜 User Copy</button>
+        <button class="btn-header btn-red" onclick="copyATinCopy()">📤 A Tin Copy</button>
+        <button class="btn-header btn-dark" onclick="exportImage()">📊 P/L (Img)</button>
+        <div style="background: #2c3e50; color: #f1c40f; padding: 2px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; border: 1px solid #f1c40f;">
+            <span style="font-size: 8px; color: #bdc3c7;">🌍 GRAND TOTAL</span>
+            <span id="grandTotalDisplay" style="font-size: 13px;">0</span>
+        </div>
+    </div>
+
+    <div class="grid-tabs" id="gridTabs"></div>
+
+    <div class="number-grid" id="numberContainer"></div>
+
+    <div class="status-area">
+        <div class="status-bar">
+            <div class="status-col">
+                <label>⛔ Limit</label>
+                <div style="display:flex; align-items:center; gap:4px; width:100%;">
+                    <input type="number" id="mainLimit" value="500" onchange="refreshCalculations()">
+                    <div style="display:flex; align-items:center; gap:2px; background:#f8f9fa; padding:4px; border-radius:4px; border:1px solid #ddd; cursor:pointer;" onclick="toggleRatio()">
+                        <input type="checkbox" id="globalRatioCheck" onchange="refreshCalculations()" style="width:14px; height:14px;">
+                        <label for="globalRatioCheck" style="font-size:9px; margin:0; cursor:pointer;">အချိုးကျ</label>
                     </div>
                 </div>
-                <div class="status-col" style="border-left: 1px solid #eee;">
-                    <label>📉 Max Risk (Worst Case)</label>
-                    <div class="net-amount" id="profitAndLossDisplay" style="color:#e74c3c;">0</div>
-                </div>
             </div>
-            <div class="status-bar" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #f1f1f1;">
-                <div class="status-col"><label style="color:#95a5a6;">💰 Gross</label><div class="net-amount" id="totalAmountDisplay" style="color:#7f8c8d; font-size: 16px;">0</div></div>
-                <div class="status-col" style="border-left: 1px solid #eee;"><label style="color:#2980b9;">📥 Kept</label><div class="net-amount" id="keptAmountDisplay" style="color:#2980b9; font-size: 16px;">0</div></div>
-                <div class="status-col" style="border-left: 1px solid #eee;"><label style="color:#27ae60;">💵 Net</label><div class="net-amount" id="netAmountDisplay" style="color:#27ae60; font-size: 16px;">0</div></div>
+            <div class="status-col" style="border-left: 1px solid #eee;">
+                <label>📉 Max Risk (Worst Case)</label>
+                <div class="net-amount" id="profitAndLossDisplay" style="color:#e74c3c;">0</div>
             </div>
         </div>
-
-        <div class="customer-tabs" id="customerTabs"></div>
-        <div class="user-bar"><span class="user-name" id="displayUserName"></span><button class="settings-icon" onclick="toggleSidebar()">⚙️</button>
-        <!-- Help Modal ကို ဖွင့်မည့် ခလုတ် (ဥပမာ - Input Box ၏ ဘေးတွင်) -->
-        <button onclick="document.getElementById('helpModal').style.display='flex'" 
-        title="အသုံးပြုနည်း လမ်းညွှန်"
-        style="background: #FEF3C6; color: white; border: none; border-radius: 4px; padding: 10px 15px; cursor: pointer; margin-left: 5px; font-size: 16px;">
-    <i class="fas fa-question-circle"></i>❓</button>
-
+        <div class="status-bar" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #f1f1f1;">
+            <div class="status-col"><label style="color:#95a5a6;">💰 Gross</label><div class="net-amount" id="totalAmountDisplay" style="color:#7f8c8d; font-size: 16px;">0</div></div>
+            <div class="status-col" style="border-left: 1px solid #eee;"><label style="color:#2980b9;">📥 Kept</label><div class="net-amount" id="keptAmountDisplay" style="color:#2980b9; font-size: 16px;">0</div></div>
+            <div class="status-col" style="border-left: 1px solid #eee;"><label style="color:#27ae60;">💵 Net</label><div class="net-amount" id="netAmountDisplay" style="color:#27ae60; font-size: 16px;">0</div></div>
         </div>
-        
-        <div class="bottom-section">
-<div class="history-section">
-    <div class="history-header" style="background-color: #FEE685; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <span style="font-weight: bold; font-size: 14px;">History</span>
-        
-        <!-- (အသစ်) အနီရောင် ပြောင်းထားသော Del Selected ခလုတ် -->
-        <button class="btn-trash" onclick="deleteSelected()" 
-                style="background-color: #e74c3c; color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(231,76,60,0.3);">
-            🗑️ Del Selected
+    </div>
+
+    <div class="customer-tabs" id="customerTabs"></div>
+
+    <div class="user-bar">
+        <span class="user-name" id="displayUserName"></span>
+        <button class="settings-icon" onclick="toggleSidebar()">⚙️</button>
+        <button onclick="document.getElementById('helpModal').style.display='flex'" title="အသုံးပြုနည်း လမ်းညွှန်" style="background: #FEF3C6; color: white; border: none; border-radius: 4px; padding: 10px 15px; cursor: pointer; margin-left: 5px; font-size: 16px;">
+            <i class="fas fa-question-circle"></i>❓
         </button>
     </div>
-        <!-- (အသစ်တိုးလိုက်သော Search Box) -->
-        <div style="padding: 5px 10px; background: #E1E5E5; border-bottom: 1px solid #eee;">
-            <input type="text" id="historySearch" placeholder="🔍 ရှာရန် (ဥပမာ - 123)..." 
-                   oninput="renderHistoryLog()" 
-                   style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+    
+    <div class="bottom-section">
+        <div class="history-section">
+            <div class="history-header" style="background-color: #FEE685; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 14px;">History</span>
+                <button class="btn-trash" onclick="deleteSelected()" style="background-color: #e74c3c; color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(231,76,60,0.3);">
+                    🗑️ Del Selected
+                </button>
+            </div>
+            <div style="padding: 5px 10px; background: #E1E5E5; border-bottom: 1px solid #eee;">
+                <input type="text" id="historySearch" placeholder="🔍 ရှာရန် (ဥပမာ - 123)..." oninput="renderHistoryLog()" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+            </div>
+            <div class="history-list" id="historyLog"></div>
         </div>
 
-        <div class="history-list" id="historyLog"></div>
+        <div class="input-area">
+            <textarea id="mainInput" placeholder="Enter commands (e.g. 123 1000 r 500)"></textarea>
+            <button id="enterBtn" onclick="processInput()">Enter</button>
+        </div>
     </div>
 
-    <div class="input-area">
-        <textarea id="mainInput" placeholder="Enter commands (e.g. 123 1000 r 500)"></textarea>
-        <button id="enterBtn" onclick="processInput()">Enter</button>
+    <div class="left-footer" style="display: flex; justify-content: center; align-items: center; gap: 20px; padding: 15px 0; width: 100%; margin-top: 5px; flex-shrink: 0;">
+        <button class="btn-save" onclick="handleSaveData()" style="flex: 1; max-width: 200px; height: 45px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
+            <i class="fas fa-save" style="font-size: 18px;"></i> သိမ်းမည်
+        </button>
+        <button class="btn-history" onclick="viewHistory()" style="flex: 1; max-width: 200px; height: 45px; background: #f39c12; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
+            <i class="fas fa-folder-open" style="font-size: 18px;"></i> မှတ်တမ်း
+        </button>
     </div>
+
 </div>
+
 <!-- အကူအညီ (Help) Modal Box -->
 <div id="helpModal" class="modal-overlay" style="display: none;">
     <div class="modal-content" style="width: 600px; max-width: 95%; max-height: 85vh; display: flex; flex-direction: column;">
@@ -453,7 +520,7 @@
         <div class="modal-box">
             <h3 class="modal-title">Shortcut Manager</h3>
             <input type="text" id="shortcutName" class="modal-input" placeholder="Short Name (e.g. set1)">
-            <textarea id="shortcutValue" class="modal-input" placeholder="Full Commands" rows="3" style="resize:none; margin-top:10px;"></textarea>
+            <textarea id="shortcutValue" class="modal-input" placeholder="Full Commands" rows="3" style="resize:none; margin-top:25px;"></textarea>
             <div class="modal-actions">
                 <button class="btn-modal btn-modal-cancel" onclick="closeShortcutModal()">Cancel</button>
                 <button class="btn-modal btn-modal-save" onclick="saveShortcut()">Save</button>
@@ -528,6 +595,10 @@
     const input = document.getElementById('mainInput');
     let val = input.value.trim();
     if (!val) return;
+    
+    // ✨ [ဒီနေရာကို ရွှေ့လိုက်ပါ] စာရိုက်ထားတာကို ဖမ်းပြီးတာနဲ့ Box ကို ချက်ချင်း အရင်ရှင်းပစ်မည်
+    input.value = '';
+    input.style.height = '45px';
 
     // --- ၁။ မလိုအပ်သော စကားလုံးများကို ဖယ်ရှားခြင်း ---
     val = val.replace(/အစ်ကို|ညီလေး|ဆရာ|ကို|ဦး|ဒေါ်|ဗျာ|ခင်ဗျာ|ရှင့်|နော်|ok|help|plz|hi|hello|mingalarpar/gi, ' ');
@@ -566,7 +637,7 @@
         let engLine = myanmarToEnglishNumbers(rawLine);
         let cl = cleanInput(engLine).replace(/,/g, '').trim();
         if (!cl || cl.includes('---') || cl.toLowerCase().includes('total') || cl.includes('ဒိုင်ချုပ်')) return;
-
+//*ပြင်ထာ*း//
         cl.replace(/\/\//g, ',').split(',').forEach(seg => {
             let s = seg.trim();
             if (!s) return;
@@ -716,8 +787,6 @@
         loadGrid(currentStartDigit);
         saveData();
     }
-    input.value = '';
-    input.style.height = '45px';
 }
     function cleanInput(str){ const m = {'၀':'0','၁':'1','၂':'2','၃':'3','၄':'4','၅':'5','၆':'6','၇':'7','၈':'8','၉':'9'}; return str.replace(/[၀-၉]/g, c => m[c]||c); }
     function checkWin(){ if(document.getElementById('winInput').value.trim().length%3===0) loadGrid(currentStartDigit); }
@@ -1569,6 +1638,29 @@
         alert("✅ စာရင်းဟောင်းကို ပြန်လည်ဖွင့်လှစ်ပြီးပါပြီ။");
     }
 }
+// ✨ သင့်ကုဒ်ထဲက <script> ရဲ့ အောက်ဆုံးနားတွင် ကူးထည့်ရန် ကုဒ်အသစ်
+document.addEventListener('input', function(e) {
+    // status-area အကွက်ထဲက Limit ရိုက်တဲ့ Box ကို ရှာဖွေဖမ်းယူခြင်း
+    if (e.target && (e.target.closest('.status-area') || e.target.id === 'limitInput')) {
+        const val = parseInt(e.target.value) || 0;
+        
+        // သင့်ကုဒ်ဟောင်းထဲမှာ ရှိနေနိုင်မယ့် Limit Variable တွေကို အလိုအလျောက် Update လုပ်ပေးခြင်း
+        if (typeof defaultLimit !== 'undefined') defaultLimit = val;
+        if (typeof globalLimit !== 'undefined') globalLimit = val;
+        if (typeof currentLimit !== 'undefined') currentLimit = val;
+        if (typeof limitAmount !== 'undefined') limitAmount = val;
+        
+        // အကယ်၍ လူအလိုက် Limit သီးသန့်မှတ်ထားတဲ့ စနစ်ဆိုရင်လည်း ထည့်သွင်းပေးခြင်း
+        try {
+            const activeU = [...customers, { name: TOTAL_CUSTOMER_NAME }][activeCustomerIndex];
+            if (activeU && allLedgerData[activeU.name]) {
+                allLedgerData[activeU.name].limit = val;
+            }
+        } catch(err) {
+            // Error တက်ရင် ကျော်သွားရန်
+        }
+    }
+});
 
 </script>
 <div class="modal-backdrop" id="imageModal" style="z-index: 3000;">
