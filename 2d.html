@@ -1812,67 +1812,129 @@ function copyOverLimitTextR() {
     alert("✅ အတင်စာရင်း (R ပုံစံ) Copy ကူးပြီးပါပြီ!");
 }
 
-  function copySplitOverLimitText() {
+    function copySplitOverLimitText() {
     let { exportData, currentSort } = getExportDataList();
     
-    if(exportData.length > 0) {
-        let part1Lines = [];
-        let part2Lines = [];
-        let total1 = 0;
-        let total2 = 0;
+    if (exportData.length === 0) {
+        alert("⚠️ အတင်မရှိပါ (No Export)");
+        return;
+    }
+
+    let amtMap = {};
+    let total1 = 0;
+    let total2 = 0;
+    let unevenSplitCounter = 0;
+
+    // (၁) ဂဏန်းတစ်ခုချင်းစီကို ၂ ပိုင်းခွဲ၍ Map ထဲသို့ ထည့်ခြင်း
+    exportData.forEach(item => {
+        let fullAmt = item.amt;
+        let splitAmt = Math.floor(fullAmt / 2);
+        let rem = fullAmt % 2; 
+        let amt1, amt2;
         
-        let unevenSplitCounter = 0;
-        exportData.forEach(item => {
-            let fullAmt = item.amt;
-            let splitAmt = Math.floor(fullAmt / 2);
-            let rem = fullAmt % 2; 
-            let amt1, amt2;
-            
-            if (rem === 0) { 
-                if (splitAmt % 50 !== 0) { 
-                    let floorVal = Math.floor(splitAmt / 50) * 50; 
-                    let ceilVal = Math.ceil(splitAmt / 50) * 50;   
-                    if (unevenSplitCounter % 2 === 0) {
-                        amt1 = ceilVal;
-                        amt2 = floorVal;
-                    } else {
-                        amt1 = floorVal;
-                        amt2 = ceilVal;
-                    }
-                    unevenSplitCounter++; 
-                } else {
-                    amt1 = splitAmt;
-                    amt2 = splitAmt;
-                }
-            } else { 
+        if (rem === 0) { 
+            if (splitAmt % 50 !== 0) { 
+                let floorVal = Math.floor(splitAmt / 50) * 50; 
+                let ceilVal = Math.ceil(splitAmt / 50) * 50;   
                 if (unevenSplitCounter % 2 === 0) {
-                    amt1 = splitAmt + rem;
-                    amt2 = splitAmt;
+                    amt1 = ceilVal;
+                    amt2 = floorVal;
                 } else {
-                    amt1 = splitAmt;
-                    amt2 = splitAmt + rem;
+                    amt1 = floorVal;
+                    amt2 = ceilVal;
                 }
                 unevenSplitCounter++; 
+            } else {
+                amt1 = splitAmt;
+                amt2 = splitAmt;
             }
-            
-            part1Lines.push(`${item.num}-${amt1}`);
-            part2Lines.push(`${item.num}-${amt2}`);
-            total1 += amt1;
-            total2 += amt2;
-        });
+        } else { 
+            if (unevenSplitCounter % 2 === 0) {
+                amt1 = splitAmt + rem;
+                amt2 = splitAmt;
+            } else {
+                amt1 = splitAmt;
+                amt2 = splitAmt + rem;
+            }
+            unevenSplitCounter++; 
+        }
+
+        // ကွက်တစ်ခုချင်းစီအတွက် အပိုင်း (၁) နှင့် (၂) တန်ဖိုးများကို သိမ်းဆည်းရန်
+        if (!amtMap[item.num]) {
+            amtMap[item.num] = { p1: 0, p2: 0 };
+        }
+        amtMap[item.num].p1 += amt1;
+        amtMap[item.num].p2 += amt2;
         
-        let finalText = "--- အပိုင်း (၁) ---\n" + part1Lines.join('\n') + 
-                        `\n----------\nTotal: ${total1.toLocaleString()}\n\n` +
-                        "--- အပိုင်း (၂) ---\n" + part2Lines.join('\n') + 
-                        `\n----------\nTotal: ${total2.toLocaleString()}`;
-        
-        copyToClipboard(finalText);
-        let sortMsg = (currentSort === 'max') ? " (Max Sort)" : (currentSort === 'min' ? " (Min Sort)" : "");
-        alert("✅ အတင်စာရင်းကို (၂) ပိုင်း အညီအမျှခွဲ၍" + sortMsg + " Copy ကူးပြီးပါပြီ!");
-    } else {
-        alert("⚠️ အတင်မရှိပါ (No Export)");
-    }
+        total1 += amt1;
+        total2 += amt2;
+    });
+
+    // (၂) အပိုင်း (၁) ကို R ပုံစံသို့ ပြောင်းလဲခြင်း
+    let processed1 = new Set();
+    let lines1 = [];
+    let sortedNums = Object.keys(amtMap).sort();
+
+    sortedNums.forEach(num => {
+        if (processed1.has(num)) return;
+        let a1 = amtMap[num].p1;
+        let rev = num[1] + num[0];
+
+        if (num === rev) {
+            lines1.push(`${num}-${a1}`);
+            processed1.add(num);
+        } else if (amtMap.hasOwnProperty(rev)) {
+            let a2 = amtMap[rev].p1;
+            if (a1 === a2) {
+                lines1.push(`${num} r ${a1}`);
+            } else {
+                lines1.push(`${num}-${a1} R ${a2}`);
+            }
+            processed1.add(num);
+            processed1.add(rev);
+        } else {
+            lines1.push(`${num}-${a1}`);
+            processed1.add(num);
+        }
+    });
+
+    // (၃) အပိုင်း (၂) ကို R ပုံစံသို့ ပြောင်းလဲခြင်း
+    let processed2 = new Set();
+    let lines2 = [];
+
+    sortedNums.forEach(num => {
+        if (processed2.has(num)) return;
+        let b1 = amtMap[num].p2;
+        let rev = num[1] + num[0];
+
+        if (num === rev) {
+            lines2.push(`${num}-${b1}`);
+            processed2.add(num);
+        } else if (amtMap.hasOwnProperty(rev)) {
+            let b2 = amtMap[rev].p2;
+            if (b1 === b2) {
+                lines2.push(`${num} r ${b1}`);
+            } else {
+                lines2.push(`${num}-${b1} R ${b2}`);
+            }
+            processed2.add(num);
+            processed2.add(rev);
+        } else {
+            lines2.push(`${num}-${b1}`);
+            processed2.add(num);
+        }
+    });
+
+    // (၄) စာသားအဖြစ် ပေါင်းစပ်၍ Clipboard သို့ ကူးယူခြင်း
+    let finalText = "--- အပိုင်း (၁) [R ပုံစံ] ---\n" + lines1.join('\n') + 
+                    `\n----------\nTotal: ${total1.toLocaleString()}\n\n` +
+                    "--- အပိုင်း (၂) [R ပုံစံ] ---\n" + lines2.join('\n') + 
+                    `\n----------\nTotal: ${total2.toLocaleString()}`;
+    
+    copyToClipboard(finalText);
+    alert("✅ Split စာရင်းကို အပိုင်း (၁) နှင့် (၂) အဖြစ် R ပုံစံဖြင့် Copy ကူးပြီးပါပြီ!");
 }
+
   function processInput() {
     const field = $('rawInput'); 
     if (!field.value.trim() || activeIndex === -1) return;
@@ -1888,7 +1950,10 @@ function copyOverLimitTextR() {
         let line = uniToEng(rawLine.toLowerCase());
         
         // 🔥 [ဒီနေရာမှာ အရင်ဆုံး ထားရပါမယ်] 'ည' မဖျက်ခင် bro အရင်ပြောင်းပါ 🔥
+        line = line.replace(/(\d+)\s*ခွေ\s*(\d+)\s*(?:အ)?ပူး(?:ပါ)?/g, '$1 kp $2');
+        line = line.replace(/kအပူးပါ|အပူးပါခွေ|ခွေအပူးပါ|ခွေp|ခွေa|ခွေပူး|ခပ|ka/g, 'kp'); 
         line = line.replace(/ညီအစ်ကို|ညီအကို|ညီကို|ညက|bro|br/g, 'bro');
+        line = line.replace(/ပါဝါ|ပဝ|power/g, 'pw');
         line = line.replace(/အပါ|ပတ်သီး|ပါတ်|ပတ်|ပါ/g, 'p');
 
         // ပြီးမှ အောက်က ဟာတွေ ဆက်လုပ်ပါ
@@ -1903,16 +1968,15 @@ function copyOverLimitTextR() {
 
         // 🛑 [အရေးကြီး] စကားလုံးအရှည်တွေကို အရင် Replace လုပ်ပါ 🛑
         line = line.replace(/နတ္ခတ်|နက္ခတ်|နခ|နတ်ခက်|နက်ခတ်|နက်ခက်|နတ်ခတ်/g, 'nk');
-        line = line.replace(/ပါဝါ|ပဝ|power/g, 'pw');
+
         // (bro လိုင်းကို အပေါ်တင်လိုက်ပြီဖြစ်လို့ ဒီနေရာမှာ မရှိတော့ပါ)
         line = line.replace(/စုံထိပ်|စထ/g, 'sh')
               .replace(/မထိပ်|မထ/g, 'mh')
               .replace(/စုံနောက်|စန/g, 'st')
-              .replace(/မနောက်|မန/g, 'mt');
-              
-        line = line.replace(/kအပူးပါ|အပူးပါခွေ|ခွေအပူးပါ|ခွေp|ခွေa|ခွေပူး|ခပ|ka/g, 'kp').replace(/အပူး၁၀ကွက်|အပူး10ကွက်|အပူး|အပ|ပူး/g, 'ap')
-             .replace(/ဒဲ့ကပ်|ကပ်/g, 'dk')
-             .replace(/ထိပ်စီး|ထိပ်|ထ/g, 'h');
+              .replace(/မနောက်|မန/g, 'mt')
+              .replace(/အပူး၁၀ကွက်|အပူး10ကွက်|အပူး|အပ|ပူး/g, 'ap')
+              .replace(/ဒဲ့ကပ်|ကပ်/g, 'dk')
+              .replace(/ထိပ်စီး|ထိပ်|ထ/g, 'h');
 
         // 🛑 ပြီးမှ စာလုံးအတိုတွေကို နောက်မှ Replace လုပ်ပါ 🛑
         line = line.replace(/ခွေ\s*(.*?)\s*အပူး(?:ပါ)?/g, 'kp $1');
@@ -1955,11 +2019,32 @@ function copyOverLimitTextR() {
         let id = Date.now() + Math.random(); 
         let matches = [];
         
-        // (၁) ထိပ် + နောက် / ထိပ် + R တွဲလျက်ပုံစံ
-        let htMatch = trim.match(/^(\d+)\s*h\s*(\d+)\s*(?:t|n)\s*(\d+)$/i);
+                        // (၁) ထိပ် + နောက် / ထိပ် + R (သို့) Single HT တွဲလျက်ပုံစံများ (ပမာဏပေါင်းစပ်ခြင်း Logic ပါဝင်သည်)
+        let singleHtMatch = trim.match(/^(\d+)\s*(?:ht|th|ထိပ်နောက်)\s*(\d+)$/i);
+        let htMatch = trim.match(/^(\d+)\s*h\s*(\d+)\s*(?:t|n|နောက်)\s*(\d+)$/i);
         let hrMatch = trim.match(/^(\d+)\s*h\s*(\d+)\s*r\s*(\d+)$/i);
 
-        if (htMatch || hrMatch) {
+        if (singleHtMatch) {
+            let digitStr = singleHtMatch[1];
+            let amt = parseInt(singleHtMatch[2]);
+            let digits = digitStr.split('');
+            
+            digits.forEach(d => {
+                for (let i = 0; i < 100; i++) {
+                    let numStr = i.toString().padStart(2, '0');
+                    let isHead = numStr.startsWith(d);
+                    let isRear = numStr.endsWith(d);
+                    
+                    if (isHead && isRear) {
+                        // အပူးဂဏန်း (ဥပမာ 11) ဖြစ်ပြီး ထိပ်ရောနောက်ပါ တစ်ခါတည်းပိုင်ရင် ပမာဏ ၂ ဆ (သို့) တိုက်ရိုက်ပေါင်းထည့်ရန်
+                        matches.push({ num: numStr, amt: amt * 2 });
+                    } else if (isHead || isRear) {
+                        matches.push({ num: numStr, amt: amt });
+                    }
+                }
+            });
+        }
+        else if (htMatch || hrMatch) {
             let match = htMatch || hrMatch;
             let digitStr = match[1];       
             let hAmt = parseInt(match[2]);  
@@ -1972,11 +2057,18 @@ function copyOverLimitTextR() {
                     let isHead = numStr.startsWith(d); 
                     let isRear = numStr.endsWith(d);    
                     
-                    if (isHead) matches.push({ num: numStr, amt: hAmt });
-                    if (isRear) matches.push({ num: numStr, amt: secondAmt });
+                    if (isHead && isRear) {
+                        // ထိပ်ရော နောက်ပါ တစ်ပြိုင်နက်တူညီနေသည့် အပူးကွက်များအတွက် ပမာဏ ၂ ခု ပေါင်းထည့်မည်
+                        matches.push({ num: numStr, amt: hAmt + secondAmt });
+                    } else {
+                        if (isHead) matches.push({ num: numStr, amt: hAmt });
+                        if (isRear) matches.push({ num: numStr, amt: secondAmt });
+                    }
                 }
             });
-        } 
+        }
+
+
         else { 
             let dkMatch = trim.match(/^(\d+)\s*dk\s*(\d+)\s*[\s,]+(\d+)(?:\s*(?:r|အာ)\s*(\d+))?/i);
             if (dkMatch) {
@@ -2135,17 +2227,29 @@ function copyOverLimitTextR() {
             if (MM_MAP[cmd]) { cmd = MM_MAP[cmd]; }
             let amt = 0; 
             if (i + 1 < parts.length && /^\d+$/.test(parts[i+1])) { amt = parseInt(parts[i+1]); i += 2; } else { i++; }
-            if (['h', 't', 'n', 'p', 'k', 'b', 'kp', 'ht', 'th', 'dk', 'ထိပ်', 'နောက်', 'ထိပ်နောက်', 'ဒဲ့ကပ်', 'ခွေ', 'ပတ်'].includes(cmd)) {
+                        if (['h', 't', 'n', 'p', 'k', 'b', 'kp', 'ht', 'th', 'dk', 'ထိပ်', 'နောက်', 'ထိပ်နောက်', 'ဒဲ့ကပ်', 'ခွေ', 'ပတ်'].includes(cmd)) {
                  if (globalNums.length > 0 && amt > 0) {
+                    
+                    // 🔥 ဤနေရာတွင် ထည့်ပါ (ကုဒ်အဟောင်းများ မပျက်စေဘဲ ဤနေရာကနေ စစ်ပေးပါမည်)
+                    if (['k', 'kp', 'ခွေ'].includes(cmd)) {
+                        let hasDuplicate = globalNums.some((val, idx, arr) => arr.indexOf(val) !== idx);
+                        if (hasDuplicate) {
+                            alert("⚠️ အမှား: ထည့်သွင်းထားသော ခွေဂဏန်းထဲတွင် ဂဏန်းနှစ်ခါထပ်နေပါသည် (ဥပမာ - " + globalNums.join('') + ")။ ဤစာရင်းကို ထည့်သွင်း၍မရပါ။");
+                            return; 
+                        }
+                    }
+                    // -------------------------------------------------------------
+
                     if (cmd === 'h' || cmd === 'ထိပ်') globalNums.forEach(n => AL.forEach(x => addMatch(n + x, amt)));
                     else if (cmd === 't' || cmd === 'n' || cmd === 'နောက်') globalNums.forEach(n => AL.forEach(x => addMatch(x + n, amt)));
-                    else if (cmd === 'ht' || cmd === 'th' || cmd === 'ထိပ်နောက်') globalNums.forEach(n => { AL.forEach(x => addMatch(n + x, amt)); AL.forEach(x => addMatch(x + n, amt)); });
+                    else if (cmd === 'ht' || cmd === 'th' || cmd === 'ထိပ်နောက်') globalNums.forEach(n => { AL.forEach(x => addMatch(x + n, amt)); AL.forEach(x => addMatch(x + n, amt)); });
                     else if (cmd === 'p' || cmd === 'ပတ်') globalNums.forEach(n => AL.forEach(x => { addMatch(n + x, amt); if (n !== x) addMatch(x + n, amt); }));
                     else if (cmd === 'k' || cmd === 'kp' || cmd === 'ခွေ') { for (let a = 0; a < globalNums.length; a++) { for (let b = 0; b < globalNums.length; b++) { if (a === b) continue; addMatch(globalNums[a] + globalNums[b], amt); } } if (cmd === 'kp') globalNums.forEach(d => addMatch(d + d, amt)); } 
                     else if (cmd === 'dk' || cmd === 'ဒဲ့ကပ်') { for (let a = 0; a < globalNums.length; a++) { for (let b = a + 1; b < globalNums.length; b++) { addMatch(globalNums[a] + globalNums[b], amt); } } }
                     else if (cmd === 'b') { globalNums.forEach(b => { for(let x=0; x<100; x++) { let nStr = x.toString().padStart(2, '0'); if ((parseInt(nStr[0]) + parseInt(nStr[1])) % 10 == parseInt(b)) addMatch(nStr, amt); } }); }
                 }
             }
+
             else if (amt > 0) {
                 if (SHORTCUT_LISTS[cmd]) { SHORTCUT_LISTS[cmd].forEach(n => addMatch(n, amt)); }
                 else if (cmd === 'mm') AL.forEach(a => AL.forEach(b => ["1","3","5","7","9"].includes(a) && ["1","3","5","7","9"].includes(b) && addMatch(a+b, amt)));
