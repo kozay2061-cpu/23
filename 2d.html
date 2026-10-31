@@ -1948,10 +1948,10 @@ function processInput() {
         for (let rawLine of rawLines) {
         if (!rawLine.trim()) continue;
 
-                let line = uniToEng(rawLine.toLowerCase());
+        let line = uniToEng(rawLine.toLowerCase());
 
         // ✅ အဓိက ပြင်ဆင်ချက်: ထိပ်, နောက်, ထိပ်နောက်, r (အသွားအပြန်) ရှေ့က ဂဏန်းများကြား space များကို အလိုအလျောက် ပေါင်းပေးခြင်း
-        line = line.replace(/(\d+)(?:\s+(\d+))+(?=\s*(?:h|t|r|th|ht|ထိပ်|နောက်|ထိပ်နောက်))/gi, function(match) {
+        line = line.replace(/(\d+)(?:\s+(\d+))+(?=\s*(?:h|t|th|ht|ထိပ်|နောက်|ထိပ်နောက်))/gi, function(match) {
             return match.replace(/\s+/g, '');
         });
 
@@ -2075,8 +2075,6 @@ let hrMatch = trim.match(/^(\d+)\s*h\s*(\d+)\s*(?:r|အာ)\s*(\d+)$/i);
         }
         else { 
             let dkMatch = trim.match(/^(\d+)\s*dk\s*(\d+)\s*[\s,]+(\d+)(?:\s*(?:r|အာ)\s*(\d+))?/i);
-            // ကျန်သည့် ကုဒ်များ မူရင်းအတိုင်း ဆက်သွားပါ...
-
             if (dkMatch) {
                 let fStr = dkMatch[1]; let bStr = dkMatch[2]; let mAmt = parseInt(dkMatch[3]); let rAmt = dkMatch[4] ? parseInt(dkMatch[4]) : 0; 
                 fStr.split('').forEach(f => { bStr.split('').forEach(b => { matches.push({ num: f + b, amt: mAmt }); }); });
