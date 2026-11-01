@@ -735,6 +735,18 @@ function getKhwayWithPairs3D(str) {
                 let s = seg.trim();
                 if (!s) return;
 
+                // 📌 ပုံစံအသစ်: အစက်များဖြင့် ချိတ်ဆက်ထားသော ဂဏန်းများ နောက်ဆုံးတွင် =ငွေပမာဏ ပါခြင်း (ဥပမာ- 252.472...=50)
+                let dotGroupMatch = s.match(/^(.*?)[\s=]+(\d+)$/);
+                if (dotGroupMatch) {
+                    let prefPart = dotGroupMatch[1];
+                    let amtVal = parseInt(dotGroupMatch[2], 10);
+                    let nmsPart = prefPart.match(/\d{3}/g);
+                    if (nmsPart && amtVal > 0) {
+                        nmsPart.forEach(n => addD(n, amtVal));
+                        return; // ပြီးသွားပြီဖြစ်므로 ကျန်တာတွေကို ကျော်မည်
+                    }
+                }
+
                 // kpt ကို kp ထက် အပေါ်မှာ အရင်တင်စစ်ပြီး \b ထည့်ပါ
                 let kpt_m = s.match(/^(\d{4,})\s*(kpt)\b[^\d]*(\d+)$/i);
                 let kp_m = s.match(/^(\d{4,})\s*(kp)\b[^\d]*(\d+)$/i);
@@ -901,8 +913,6 @@ function getKhwayWithPairs3D(str) {
             saveData();
         }
     }
-
-
 
     function cleanInput(str){ const m = {'၀':'0','၁':'1','၂':'2','၃':'3','၄':'4','၅':'5','၆':'6','၇':'7','၈':'8','၉':'9'}; return str.replace(/[၀-၉]/g, c => m[c]||c); }
     function checkWin(){ if(document.getElementById('winInput').value.trim().length%3===0) loadGrid(currentStartDigit); }
