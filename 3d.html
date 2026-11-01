@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="my">
 <head>
@@ -7,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* --- CSS Section: Polished & Responsive UI --- */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', 'Pyidaungsu', sans-serif; }
         
         body { 
@@ -30,6 +32,7 @@
             gap: 8px;
         }
 
+        /* Number Grid */
         .number-grid { 
             flex: 1; 
             padding: 8px; 
@@ -43,6 +46,7 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
+        /* Header Buttons */
         .left-header { 
             padding: 6px; 
             background: #dfe6e9; 
@@ -81,6 +85,7 @@
             outline: none;
         }
 
+        /* Tabs & Grid */
         .grid-tabs { display: flex; background: #2c3e50; border-radius: 8px; overflow-x: auto; flex-shrink: 0; }
         .grid-tab-btn { 
             flex: 1; 
@@ -114,6 +119,7 @@
         .num-val { display: block; font-weight: bold; font-size: 13px; color: #333; }
         .amt-val { display: block; color: #27ae60; font-size: 10px; font-weight: bold; }
 
+        /* Status Bar */
         .status-area { background: white; padding: 12px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .status-bar { display: flex; gap: 8px; }
         .status-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -121,11 +127,13 @@
         .status-col input { width: 100%; padding: 6px; text-align: center; border: 1px solid #ccc; border-radius: 6px; font-weight: bold; font-size: 16px; color: #2c3e50; }
         .net-amount { font-size: 18px; font-weight: bold; }
 
+        /* Customer Tabs */
         .customer-tabs { display: flex; overflow-x: auto; gap: 8px; padding: 2px 0; flex-shrink: 0; scrollbar-width: none; }
         .customer-tabs::-webkit-scrollbar { display: none; }
         .cust-tab { padding: 8px 18px; background: white; border: 1px solid #ddd; border-radius: 20px; white-space: nowrap; cursor: pointer; font-size: 13px; font-weight: bold; color: #555; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: 0.2s; }
         .cust-tab.active { background: #3498db; color: white; border-color: #2980b9; }
 
+        /* User Bar & History */
         .user-bar { display: flex; justify-content: space-between; align-items: center; background: #D6D3D1; padding: 10px 15px; border-radius: 8px; flex-shrink: 0; }
         .user-name { font-weight: bold; font-size: 15px; color: #2c3e50; }
         .settings-icon { font-size: 20px; cursor: pointer; border: none; background: none; transition: 0.3s; }
@@ -139,6 +147,7 @@
         .history-item:hover { background: #f8f9fa; }
         .history-item.selected { background-color: #ffcccc; border-left: 5px solid #c0392b; font-weight: bold; }
 
+        /* Quick Amount Buttons Bar */
         .quick-amounts-bar {
             display: flex;
             gap: 4px;
@@ -166,6 +175,7 @@
             transform: scale(0.95);
         }
 
+        /* Input Area & Controls */
         .input-area { 
             display: flex; 
             gap: 6px; 
@@ -234,6 +244,7 @@
             100% { transform: scale(1); }
         }
 
+        /* Sidebar & Modals */
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; display: none; backdrop-filter: blur(2px); }
         .settings-sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #B2EDEA; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
         .sidebar-active { right: 0; }
@@ -261,22 +272,27 @@
 <body>
 <div class="main-container">
 
+    <!-- Header Tools -->
     <div class="left-header">
         <input type="number" id="winInput" class="win-input" placeholder="Win" onkeyup="checkWin()">
         <button class="btn-header btn-blue" onclick="copyUserCopy()"><i class="fas fa-file-alt"></i> User</button>
         <button class="btn-header btn-red" onclick="copyATinCopy()"><i class="fas fa-share-square"></i> A Tin</button>
         <button class="btn-header btn-dark" onclick="exportImage()"><i class="fas fa-chart-bar"></i> P/L Img</button>
-        <button onclick="location.href='2d.html'" style="background-color: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">👉 2D သို့သွားရန် </button>
-        
+        <button onclick="location.href='2d.html'" style="background-color: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;"> 👉 2D သို့သွားရန်</button>
+
         <div style="background: #2c3e50; color: #f1c40f; padding: 2px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; border: 1px solid #f1c40f;">
             <span style="font-size: 8px; color: #bdc3c7;">TOTAL</span>
             <span id="grandTotalDisplay" style="font-size: 12px;">0</span>
         </div>
     </div>
 
+    <!-- 0-9 Digit Selector Tabs -->
     <div class="grid-tabs" id="gridTabs"></div>
+
+    <!-- 100 Numbers Display Grid -->
     <div class="number-grid" id="numberContainer"></div>
 
+    <!-- Status & Calculations Area -->
     <div class="status-area">
         <div class="status-bar">
             <div class="status-col">
@@ -301,8 +317,10 @@
         </div>
     </div>
 
+    <!-- Customer Selection Tabs -->
     <div class="customer-tabs" id="customerTabs"></div>
 
+    <!-- Active User Status Bar -->
     <div class="user-bar">
         <span class="user-name" id="displayUserName">👤 Mg Mg</span>
         <div style="display: flex; gap: 8px; align-items: center;">
@@ -311,6 +329,7 @@
         </div>
     </div>
     
+    <!-- Input & History Section -->
     <div class="bottom-section">
         <div class="history-section">
             <div class="history-header">
@@ -325,22 +344,16 @@
             <div class="history-list" id="historyLog"></div>
         </div>
 
+        <!-- Quick Amount Selection Buttons -->
         <div class="quick-amounts-bar">
-            <button class="btn-quick-amt" onclick="appendQuickAmount(50)">+50</button>
             <button class="btn-quick-amt" onclick="appendQuickAmount(100)">+100</button>
-            <button class="btn-quick-amt" onclick="appendQuickAmount(150)">+150</button>
-            <button class="btn-quick-amt" onclick="appendQuickAmount(200)">+200</button>
-            <button class="btn-quick-amt" onclick="appendQuickAmount(250)">+250</button>
             <button class="btn-quick-amt" onclick="appendQuickAmount(500)">+500</button>
             <button class="btn-quick-amt" onclick="appendQuickAmount(1000)">+1000</button>
-            <button class="btn-quick-amt" onclick="appendQuickAmount(1500)">+1500</button>
-            <button class="btn-quick-amt" onclick="appendQuickAmount(2000)">+2000</button>
-            <button class="btn-quick-amt" onclick="appendQuickAmount(2500)">+2500</button>
-            <button class="btn-quick-amt" onclick="appendQuickAmount(3500)">+3500</button>
             <button class="btn-quick-amt" onclick="appendQuickAmount(5000)">+5000</button>
             <button class="btn-quick-amt" onclick="appendQuickAmount(10000)">+10000</button>
         </div>
 
+        <!-- Main Input Controls -->
         <div class="input-area">
             <textarea id="mainInput" placeholder="Enter commands (e.g. 123 1000 r 500)"></textarea>
             <div class="input-action-column">
@@ -351,6 +364,7 @@
         </div>
     </div>
 
+    <!-- Bottom Action Buttons -->
     <div class="left-footer" style="display: flex; justify-content: center; align-items: center; gap: 15px; padding: 8px 0; width: 100%;">
         <button class="btn-save" onclick="handleSaveData()" style="flex: 1; height: 40px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px;">
             <i class="fas fa-save"></i> သိမ်းမည်
@@ -371,8 +385,11 @@
         </div>
         <div style="flex: 1; overflow-y: auto; padding: 10px 0; font-size: 13px; line-height: 1.6;">
             <p><strong>💡 အခြေခံသွင်းနည်း:</strong> <code>123 500</code> သို့မဟုတ် <code>၁၂၃-၅၀၀</code></p>
+            <p><strong>🔢 ဂဏန်းအများ (Multi-numbers):</strong> <code>123, 456, 789 500</code> (ဂဏန်းအများကြီးကို ငွေပမာဏ တစ်ခုတည်းနဲ့ တူတူထိုးရန်)</p>
             <p><strong>🔄 အာ (Round):</strong> <code>123r 500</code> (ပတ်လည် ၆ ကွက် ၅၀၀ ဖိုးစီ)</p>
-            <p><strong>🔀 ခွေ (Khway):</strong> <code>1234k 500</code> (၄ လုံးခွေ ၃ လုံးတွဲ)</p>
+            <p><strong>🔀 ခွေ (Khway):</strong> <code>1234k 500</code> (၄ လုံးခွေ ၃ လုံးတွဲ - ၂၄ ကွက်)</p>
+            <p><strong>🔀 အပူးပါခွေ (Khway + Pairs):</strong> <code>1234 kp 500</code> (၃၆ ကွက်)</p>
+            <p><strong>🎯 အပူးနှင့် အပူးတူပါခွေ (KPT):</strong> <code>1234 kpt 500</code> (၆၄ ကွက် - ရိုးရိုးခွေ + အပူးပါ + အပူးတူ)</p>
             <p><strong>🎯 ထွိုင် (Try):</strong> <code>123t 500</code> (၁၁၁, ၂၂၂, ၃၃၃ ၅၀၀ ဖိုးစီ)</p>
             <p><strong>📍 နေရာ (Position):</strong> <code>1 pos_h 500</code> (၁ ထိပ်သီးသန့် ၅၀၀)</p>
             <p><strong>↔️ ရိုးရိုး ထိပ်/နောက်:</strong> <code>1h 500</code> (၁ ထိပ် ဂဏန်း ၁၀၀ စီ)</p>
@@ -399,7 +416,7 @@
         <div style="display: flex; gap: 6px;">
             <div style="flex: 1;">
                 <label style="font-size: 10px;">3D အဆ</label>
-                <input type="number" id="settingAhSa" value="500" onchange="refreshCalculations()" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
+                <input type="number" id="settingAhSa" value="700" onchange="refreshCalculations()" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
             </div>
             <div style="flex: 1;">
                 <label style="font-size: 10px;">တွဲ အဆ</label>
@@ -485,6 +502,7 @@
 </div>
 
 <script>
+    // --- ==== LOGIC SECTION ==== ---
     const TRIPLE_NUMBERS = ['000','111','222','333','444','555','666','777','888','999'];
     let allLedgerData = {}, allHistoryBatches = {}, shortcuts = {}, customLimits = {};
     
@@ -518,26 +536,31 @@
         }
     });
 
-    // Quick Amount buttons: Clicking twice will append space and the amount (e.g. 100 100)
+    // Speed Feature: Quick Amount buttons
     function appendQuickAmount(amt) {
         const input = document.getElementById('mainInput');
         let text = input.value.trim();
-        
         if (!text) {
-            input.value = amt;
-        } else {
+            input.focus();
+            return;
+        }
+        // If text ends with numbers or spaces, add format space
+        if (/\d$/.test(text)) {
             input.value = text + " " + amt;
+        } else {
+            input.value = text + amt;
         }
         input.focus();
     }
 
+    // Speed Feature: Web Speech API Voice Input
     function setupSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.lang = 'my-MM';
+            recognition.lang = 'my-MM'; // Default Myanmar Speech
 
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
@@ -546,8 +569,14 @@
                 stopRecordingState();
             };
 
-            recognition.onerror = () => { stopRecordingState(); };
-            recognition.onend = () => { stopRecordingState(); };
+            recognition.onerror = (event) => {
+                console.warn("Speech recognition error", event.error);
+                stopRecordingState();
+            };
+
+            recognition.onend = () => {
+                stopRecordingState();
+            };
         }
     }
 
@@ -564,7 +593,9 @@
                 recognition.start();
                 isRecording = true;
                 document.getElementById('micBtn').classList.add('recording');
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
         }
     }
 
@@ -574,6 +605,7 @@
         if (btn) btn.classList.remove('recording');
     }
 
+    // Speed Feature: Clipboard Fast Paste
     function pasteClipboard() {
         if (navigator.clipboard && navigator.clipboard.readText) {
             navigator.clipboard.readText().then(text => {
@@ -581,8 +613,12 @@
                     const input = document.getElementById('mainInput');
                     input.value += (input.value ? "\n" : "") + text;
                 }
-            }).catch(() => { alert("Clipboard ဖတ်ခွင့် ပိတ်ထားပါသည်။"); });
-        } else { alert("Clipboard ကို ဖတ်၍မရပါခင်ဗျာ။"); }
+            }).catch(() => {
+                alert("Clipboard ဖတ်ခွင့် ပိတ်ထားပါသည်။");
+            });
+        } else {
+            alert("Clipboard ကို ဖတ်၍မရပါခင်ဗျာ။");
+        }
     }
 
     const getPermutations = (str) => {
@@ -613,8 +649,33 @@
         }
         return [...new Set(results)];
     }
+    // အမြွှာစုံပါသော ခွေကွက်များ (kp)[span_1](start_span)[span_1](end_span)
+    // အမြွှာစုံပါသော ခွေကွက်များ (kp) - ထပ်နေမှုမရှိစေရန် တိကျစွာထုတ်ပေးခြင်း
+function getKhwayWithPairs3D(str) {
+    let results = [];
+    let chars = str.split('');
+    for (let i = 0; i < chars.length; i++) {
+        for (let j = 0; j < chars.length; j++) {
+            if (i !== j) {
+                // အမြွှာ ၂ လုံးနှင့် တစ်ကွဲ ၁ လုံး၏ ပုံစံ ၃ မျိုးကို တိုက်ရိုက်ထုတ်မည်
+                results.push(chars[i] + chars[i] + chars[j]);
+                results.push(chars[i] + chars[j] + chars[i]);
+                results.push(chars[j] + chars[i] + chars[i]);
+            }
+        }
+    }
+    return [...new Set(results)]; // ထပ်နေသည်များကို ဖယ်ထုတ်မည်
+}
 
-    function processInput() {
+
+// ထပ်တူဂဏန်းများ (kpt အတွက် 111, 222, 333 ...)[span_2](start_span)[span_2](end_span)
+    function getTriples3D(str) {
+    let results = [];
+    let chars = str.split('');
+    chars.forEach(c => results.push(c + c + c));
+    return results;
+}
+        function processInput() {
         const activeU = [...customers, { name: TOTAL_CUSTOMER_NAME }][activeCustomerIndex];
         if (activeU.name === TOTAL_CUSTOMER_NAME) return alert("Total View တွင် စာရိုက်၍မရပါ။");
 
@@ -665,6 +726,9 @@
                 let s = seg.trim();
                 if (!s) return;
 
+                // kpt ကို kp ထက် အပေါ်မှာ အရင်တင်စစ်ပြီး \b ထည့်ပါ
+                let kpt_m = s.match(/^(\d{4,})\s*(kpt)\b[^\d]*(\d+)$/i);
+                let kp_m = s.match(/^(\d{4,})\s*(kp)\b[^\d]*(\d+)$/i);
                 let km = s.match(/^(\d{4,})\s*(k|ခွေ)[^\d]*(\d+)$/i);
                 let tm_dynamic = s.match(/^(\d{2,})\s*(try|tr|t|ထွိုင်|ထိုင်)[^\d]*(\d+)$/i);
                 let tm_standalone = s.match(/^(try|ထွိုင်|ထိုင်)[^\d]*(\d+)$/i);
@@ -673,13 +737,25 @@
                 let wm = s.match(/^(\d{2})\s*(w|တွဲ)[^\d]*(\d+)$/i);
                 let bm = s.match(/^(\d{1,2})\s*(break|b|ဘရိတ်|ဘရ)/i);
 
-                if (km || tm_dynamic || tm_standalone || pos_m || sm || wm || bm) {
+                if (km || kp_m || kpt_m || tm_dynamic || tm_standalone || pos_m || sm || wm || bm) {
                     let amt = 0;
                     let amtMatch = s.match(/(\d+)$/);
                     if (amtMatch) amt = parseInt(amtMatch[1], 10);
                     
-                    if (amt > 0) {
-                        if (km) {
+                   if (amt > 0) {
+                        if (kpt_m) {
+                            let baseStr = kpt_m[1];
+                            let combinations = [...new Set([
+                                ...getKhway3D(baseStr), 
+                                ...getKhwayWithPairs3D(baseStr), 
+                                ...getTriples3D(baseStr)
+                            ])];
+                            combinations.forEach(n => addD(n, amt));
+                        } else if (kp_m) {
+                            let baseStr = kp_m[1];
+                            let combinations = [...new Set([...getKhway3D(baseStr), ...getKhwayWithPairs3D(baseStr)])];
+                            combinations.forEach(n => addD(n, amt));
+                        } else if (km) {
                             let combinations = getKhway3D(km[1]); 
                             combinations.forEach(n => addD(n, amt));
                         } else if (tm_dynamic) {
@@ -728,27 +804,34 @@
                 let dA = 0, rA = 0, pref = "";
                 const reverseSymbols = '(?:r|အာ|@|©|®)';
 
-                const m_dae_r = s.match(new RegExp(`^(.*?)\\s*ဒဲ့\\s*(\\d+)\\s*[\\/\\-]?\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
-                const m1 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
-                const m2 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s+(\\d+)\\s*$`, 'i'));
-                const m3 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
-                const m4 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*$`, 'i'));
-                const m5_spaced = s.match(/^(.*?)\s+(?:ဒဲ့|-|=)?\s*(\d+)$/i);
-                const m5_dae = s.match(/^(.*?)\s*ဒဲ့\s*(\d+)$/i);
-                const m6_char = s.match(/^(.*?)[^\d\-\/\s]\s*(\d+)$/i);
+                const multiRMatch = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
 
-                if (m_dae_r) { pref = m_dae_r[1]; dA = parseInt(m_dae_r[2], 10); rA = parseInt(m_dae_r[3], 10); }
-                else if (m1) { pref = m1[1]; dA = parseInt(m1[2], 10); rA = parseInt(m1[3], 10); }
-                else if (m2) { pref = m2[1]; dA = parseInt(m2[2], 10); rA = parseInt(m2[3], 10); }
-                else if (m3) { pref = m3[1]; rA = parseInt(m3[2], 10); }
-                else if (m4) { pref = m4[1]; rA = parseInt(m4[2], 10); }
-                else if (m5_spaced) { pref = m5_spaced[1]; dA = parseInt(m5_spaced[2], 10); }
-                else if (m5_dae) { pref = m5_dae[1]; dA = parseInt(m5_dae[2], 10); }
-                else if (m6_char) { pref = m6_char[1]; dA = parseInt(m6_char[2], 10); }
-                else { pref = s; }
+                if (multiRMatch) {
+                    pref = multiRMatch[1];
+                    rA = parseInt(multiRMatch[2], 10);
+                } else {
+                    const m_dae_r = s.match(new RegExp(`^(.*?)\\s*ဒဲ့\\s*(\\d+)\\s*[\\/\\-]?\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
+                    const m1 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
+                    const m2 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s+(\\d+)\\s*$`, 'i'));
+                    const m3 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
+                    const m4 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*$`, 'i'));
+                    const m5_spaced = s.match(/^(.*?)\s+(?:ဒဲ့|-|=)?\s*(\d+)$/i);
+                    const m5_dae = s.match(/^(.*?)\\s*ဒဲ့\\s*(\d+)$/i);
+                    const m6_char = s.match(/^(.*?)[^\d\-\/\s]\s*(\d+)$/i);
+
+                    if (m_dae_r) { pref = m_dae_r[1]; dA = parseInt(m_dae_r[2], 10); rA = parseInt(m_dae_r[3], 10); }
+                    else if (m1) { pref = m1[1]; dA = parseInt(m1[2], 10); rA = parseInt(m1[3], 10); }
+                    else if (m2) { pref = m2[1]; dA = parseInt(m2[2], 10); rA = parseInt(m2[3], 10); }
+                    else if (m3) { pref = m3[1]; rA = parseInt(m3[2], 10); }
+                    else if (m4) { pref = m4[1]; rA = parseInt(m4[2], 10); }
+                    else if (m5_spaced) { pref = m5_spaced[1]; dA = parseInt(m5_spaced[2], 10); }
+                    else if (m5_dae) { pref = m5_dae[1]; dA = parseInt(m5_dae[2], 10); }
+                    else if (m6_char) { pref = m6_char[1]; dA = parseInt(m6_char[2], 10); }
+                    else { pref = s; }
+                }
 
                 const finalAmount = dA || rA;
-                let cp = pref.replace(/[.\-,\s/၊]+/g, ' ').trim();
+                let cp = pref.replace(/[.\-,\s/huri]+/g, ' ').trim();
                 let nms = cp.match(/\d{3}|\d{2}\*|\d\*\d|\*\d{2}/g);
 
                 if (nms) {
@@ -778,6 +861,8 @@
             saveData();
         }
     }
+
+
 
     function cleanInput(str){ const m = {'၀':'0','၁':'1','၂':'2','၃':'3','၄':'4','၅':'5','၆':'6','၇':'7','၈':'8','၉':'9'}; return str.replace(/[၀-၉]/g, c => m[c]||c); }
     function checkWin(){ if(document.getElementById('winInput').value.trim().length%3===0) loadGrid(currentStartDigit); }
@@ -1368,7 +1453,9 @@
         try {
             document.execCommand('copy');
             alert(successMsg);
-        } catch (err) { alert("Copy မရပါခင်ဗျာ။"); }
+        } catch (err) {
+            alert("Copy မရပါခင်ဗျာ။");
+        }
         document.body.removeChild(ta);
     }
 
