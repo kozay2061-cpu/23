@@ -684,7 +684,7 @@ function getKhwayWithPairs3D(str) {
     chars.forEach(c => results.push(c + c + c));
     return results;
 }
-        function processInput() {
+    function processInput() {
         const activeU = [...customers, { name: TOTAL_CUSTOMER_NAME }][activeCustomerIndex];
         if (activeU.name === TOTAL_CUSTOMER_NAME) return alert("Total View တွင် စာရိုက်၍မရပါ။");
 
@@ -813,17 +813,30 @@ function getKhwayWithPairs3D(str) {
                 let dA = 0, rA = 0, pref = "";
                 const reverseSymbols = '(?:r|အာ|@|©|®)';
 
+                // ပုံစံ ၁: 123 234 345 r1000 500 (သို့မဟုတ်) 123 234 345 1000 r 500
+                const m_r_da_ra = s.match(new RegExp(`^(.*?)\\s*(?:${reverseSymbols}\\s*(\\d+)|(\\d+)\\s*${reverseSymbols})\\s+(\\d+)$`, 'i'));
+                // ပုံစံ ၂: 123 234 345 1000 r (အားလုံး အာ 1000)
+                const m_ra_only = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*$`, 'i'));
+                
                 const multiRMatch = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
 
-                if (multiRMatch) {
+                if (m_r_da_ra) {
+                    pref = m_r_da_ra[1];
+                    // r နောက်က ဒါမှမဟုတ် ရှေ့ကဂဏန်းကို ဒဲ့(dA) သို့မဟုတ် အာ(rA) အဖြစ် သတ်မှတ်ရန်
+                    dA = parseInt(m_r_da_ra[2] || m_r_da_ra[3], 10);
+                    rA = parseInt(m_r_da_ra[4], 10);
+                } else if (m_ra_only) {
+                    // 123 234 345 1000 r ပုံစံအတွက် (အားလုံး အာ 1000)
+                    pref = m_ra_only[1];
+                    rA = parseInt(m_ra_only[2], 10);
+                } else if (multiRMatch) {
                     pref = multiRMatch[1];
                     rA = parseInt(multiRMatch[2], 10);
                 } else {
                     const m_dae_r = s.match(new RegExp(`^(.*?)\\s*ဒဲ့\\s*(\\d+)\\s*[\\/\\-]?\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
-                    const m1 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
-                    const m2 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s+(\\d+)\\s*$`, 'i'));
+                    const m1 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
+                    const m2 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s+(\\d+)$`, 'i'));
                     const m3 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
-                    const m4 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*$`, 'i'));
                     const m5_spaced = s.match(/^(.*?)\s+(?:ဒဲ့|-|=)?\s*(\d+)$/i);
                     const m5_dae = s.match(/^(.*?)\\s*ဒဲ့\\s*(\d+)$/i);
                     const m6_char = s.match(/^(.*?)[^\d\-\/\s]\s*(\d+)$/i);
@@ -832,7 +845,6 @@ function getKhwayWithPairs3D(str) {
                     else if (m1) { pref = m1[1]; dA = parseInt(m1[2], 10); rA = parseInt(m1[3], 10); }
                     else if (m2) { pref = m2[1]; dA = parseInt(m2[2], 10); rA = parseInt(m2[3], 10); }
                     else if (m3) { pref = m3[1]; rA = parseInt(m3[2], 10); }
-                    else if (m4) { pref = m4[1]; rA = parseInt(m4[2], 10); }
                     else if (m5_spaced) { pref = m5_spaced[1]; dA = parseInt(m5_spaced[2], 10); }
                     else if (m5_dae) { pref = m5_dae[1]; dA = parseInt(m5_dae[2], 10); }
                     else if (m6_char) { pref = m6_char[1]; dA = parseInt(m6_char[2], 10); }
