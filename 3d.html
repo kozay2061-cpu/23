@@ -813,33 +813,54 @@ function getKhwayWithPairs3D(str) {
                 let dA = 0, rA = 0, pref = "";
                 const reverseSymbols = '(?:r|အာ|@|©|®)';
 
-                // ပုံစံ ၁: 123 234 345 r1000 500 (သို့မဟုတ်) 123 234 345 1000 r 500
-                const m_r_da_ra = s.match(new RegExp(`^(.*?)\\s*(?:${reverseSymbols}\\s*(\\d+)|(\\d+)\\s*${reverseSymbols})\\s+(\\d+)$`, 'i'));
+                // ပုံစံ အသစ်: 252 532 5000r1000 (ဒဲ့ငွေနဲ့ အာငွေ နှစ်ခုလုံးပါသောပုံစံ)
+                const m_da_ra_combined = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
+                
+                // ဒဲ့ငွေနေရာမှာ 3D ဂဏန်း (ဥပမာ- 234) ပါမပါ သေချာစစ်ဆေးခြင်း (123 234 r1000 ကဲ့သို့သောပုံစံများကို ကာကွယ်ရန်)
+                let isActuallyDual = false;
+                if (m_da_ra_combined) {
+                    let potentialDa = m_da_ra_combined[2];
+                    // အကယ်၍ ဒဲ့နေရာမှာပါတဲ့ကိန်းက ၃ လုံးဂဏန်း (ဥပမာ- 234) ဖြစ်နေပြီး ရှေ့မှာလည်း ဂဏန်းတွေပါရင် ဒါဟာ ဒဲ့ငွေမဟုတ်ဘဲ နောက်ထပ်ဂဏန်းတစ်ခု ဖြစ်ပါတယ်
+                    if (/^\d{3}$/.test(potentialDa)) {
+                        isActuallyDual = true;
+                    }
+                }
+
+                // ပုံစံ ၁: 123 234 345 r1000 500
+                const m_r_da_ra = s.match(new RegExp(`^(.*?)\\s+(?:${reverseSymbols}\\s+(\\d+)\\s+(\\d+)|(\\d+)\\s*${reverseSymbols}\\s+(\\d+))$`, 'i'));
+                
                 // ပုံစံ ၂: 123 234 345 1000 r (အားလုံး အာ 1000)
                 const m_ra_only = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*$`, 'i'));
-                
+
+                // ပုံစံ ၃: 123 234 r1000 (သို့) 451-251-148 R 250
                 const multiRMatch = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
 
-                if (m_r_da_ra) {
+                if (m_da_ra_combined && !isActuallyDual) {
+                    pref = m_da_ra_combined[1];
+                    dA = parseInt(m_da_ra_combined[2], 10); // ဒဲ့ (Straight)
+                    rA = parseInt(m_da_ra_combined[3], 10); // အာ (Reverse)
+                } else if (m_r_da_ra) {
                     pref = m_r_da_ra[1];
-                    // r နောက်က ဒါမှမဟုတ် ရှေ့ကဂဏန်းကို ဒဲ့(dA) သို့မဟုတ် အာ(rA) အဖြစ် သတ်မှတ်ရန်
-                    dA = parseInt(m_r_da_ra[2] || m_r_da_ra[3], 10);
-                    rA = parseInt(m_r_da_ra[4], 10);
+                    dA = parseInt(m_r_da_ra[2] || m_r_da_ra[4], 10);
+                    rA = parseInt(m_r_da_ra[3] || m_r_da_ra[5], 10);
                 } else if (m_ra_only) {
-                    // 123 234 345 1000 r ပုံစံအတွက် (အားလုံး အာ 1000)
                     pref = m_ra_only[1];
                     rA = parseInt(m_ra_only[2], 10);
                 } else if (multiRMatch) {
                     pref = multiRMatch[1];
                     rA = parseInt(multiRMatch[2], 10);
+                } else if (isActuallyDual) {
+                    // 123 234 r1000 ကဲ့သို့သော ပုံစံအတွက် (ဂဏန်းအားလုံးကို rA သီးသန့်ပေးရန်)
+                    pref = m_da_ra_combined[1] + " " + m_da_ra_combined[2];
+                    rA = parseInt(m_da_ra_combined[3], 10);
                 } else {
                     const m_dae_r = s.match(new RegExp(`^(.*?)\\s*ဒဲ့\\s*(\\d+)\\s*[\\/\\-]?\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
                     const m1 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
                     const m2 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s+(\\d+)$`, 'i'));
                     const m3 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
-                    const m5_spaced = s.match(/^(.*?)\s+(?:ဒဲ့|-|=)?\s*(\d+)$/i);
-                    const m5_dae = s.match(/^(.*?)\\s*ဒဲ့\\s*(\d+)$/i);
-                    const m6_char = s.match(/^(.*?)[^\d\-\/\s]\s*(\d+)$/i);
+                    
+                    const m5_spaced = s.match(/^((?:\d{3}|\d{2}\*|\d\*\d|\*\d{2}|[\s\-\/]+)+)\s+(?:ဒဲ့|-|=)?\s*(\d+)$/i);
+                    const m5_dae = s.match(/^(.*?)\s*ဒဲ့\s*(\d+)$/i);
 
                     if (m_dae_r) { pref = m_dae_r[1]; dA = parseInt(m_dae_r[2], 10); rA = parseInt(m_dae_r[3], 10); }
                     else if (m1) { pref = m1[1]; dA = parseInt(m1[2], 10); rA = parseInt(m1[3], 10); }
@@ -847,10 +868,8 @@ function getKhwayWithPairs3D(str) {
                     else if (m3) { pref = m3[1]; rA = parseInt(m3[2], 10); }
                     else if (m5_spaced) { pref = m5_spaced[1]; dA = parseInt(m5_spaced[2], 10); }
                     else if (m5_dae) { pref = m5_dae[1]; dA = parseInt(m5_dae[2], 10); }
-                    else if (m6_char) { pref = m6_char[1]; dA = parseInt(m6_char[2], 10); }
                     else { pref = s; }
                 }
-
                 const finalAmount = dA || rA;
                 let cp = pref.replace(/[.\-,\s/huri]+/g, ' ').trim();
                 let nms = cp.match(/\d{3}|\d{2}\*|\d\*\d|\*\d{2}/g);
