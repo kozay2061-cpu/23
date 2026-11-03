@@ -2100,7 +2100,8 @@ function processInput() {
     let rawLines = field.value.split(/\r?\n/); 
     const WARNING_LIMIT = 30000; 
     let todayDate = new Date().toISOString().split('T')[0];
-
+    window._hasDuplicateError = false; 
+  
     for (let rawLine of rawLines) {
         if (!rawLine.trim()) continue;
 
@@ -2316,7 +2317,9 @@ function processInput() {
         // စာရင်းအသစ်ဆိုလျှင် တန်းထည့်မည်
         executeLineAddition();
     } 
-
+    if (window._hasDuplicateError) {
+        return; 
+  }
     field.value = ""; 
 }
 function processStandardCommands(line, matches) {
@@ -2393,20 +2396,26 @@ function processStandardCommands(line, matches) {
                     else if (cmd === 'ht' || cmd === 'th' || cmd === 'ထိပ်နောက်') globalNums.forEach(n => { AL.forEach(x => addMatch(x + n, amt)); AL.forEach(x => addMatch(x + n, amt)); });
                     else if (cmd === 'p' || cmd === 'ပတ်') globalNums.forEach(n => AL.forEach(x => { addMatch(n + x, amt); if (n !== x) addMatch(x + n, amt); }));
                     
-                    // 🔥 ဂဏန်းအရေအတွက် မည်မျှပင်များစေကာမူ (၂လုံး၊ ၄လုံး၊ ၅လုံး...) အမှားအယွင်းမရှိ ခွေပေးမည့်စနစ်
-                    // processStandardCommands ထဲမှ ဤလိုင်းကို ရှာပါ:
-                    else if (cmd === 'k' || cmd === 'kp' || cmd === 'ခွေ') { 
-                        for (let a = 0; a < globalNums.length; a++) { 
-                            for (let b = 0; b < globalNums.length; b++) { 
-                                if (a === b) continue; 
-                                addMatch(globalNums[a] + globalNums[b], amt); 
-                            } 
-                        } 
-                        if (cmd === 'kp') {
-                            globalNums.forEach(d => addMatch(d + d, amt)); 
-                        }
-                    }
-                    
+                        else if (cmd === 'k' || cmd === 'kp' || cmd === 'ခွေ') { 
+    // 🔥 ခွေဂဏန်းများတွင် ဂဏန်းထပ်နေပါက CustomConfirm ဖြင့် သတိပေးခြင်း
+    let uniqueNums = new Set(globalNums);
+    if (uniqueNums.size !== globalNums.length) {
+        CustomConfirm.show(`⚠️ ခွေဂဏန်းတွင် ဂဏန်းထပ်နေပါသည် (${globalNums.join('')})။ ကျေးဇူးပြု၍ စာသားကို ကိုယ်တိုင်ပြင်ဆင်ပြီးမှ ပြန်ထည့်ပါ။`, () => {});
+        window._hasDuplicateError = true; // 👈 Input Box မပျက်ဘဲ ဆက်ရှိနေစေရန်
+        return;
+    }
+
+    for (let a = 0; a < globalNums.length; a++) { 
+        for (let b = 0; b < globalNums.length; b++) { 
+            if (a === b) continue; 
+            addMatch(globalNums[a] + globalNums[b], amt); 
+        } 
+    } 
+    if (cmd === 'kp') {
+        globalNums.forEach(d => addMatch(d + d, amt)); 
+    }
+}
+
                     else if (cmd === 'dk' || cmd === 'ဒဲ့ကပ်') { 
                         for (let a = 0; a < globalNums.length; a++) { 
                             for (let b = a + 1; b < globalNums.length; b++) { 
