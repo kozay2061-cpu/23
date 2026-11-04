@@ -386,6 +386,7 @@
 </div>
 
 <!-- Help Modal -->
+<!-- Help Modal -->
 <div id="helpModal" class="modal-backdrop">
     <div class="modal-box" style="max-width: 550px; max-height: 85vh; display: flex; flex-direction: column;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3498db; padding-bottom: 10px;">
@@ -404,6 +405,7 @@
             <p><strong>↔️ ရိုးရိုး ထိပ်/နောက်:</strong> <code>1h 500</code> (၁ ထိပ် ဂဏန်း ၁၀၀ စီ)</p>
             <p><strong>🔗 အတွဲ (Pair):</strong> <code>12w 500</code> (၁၂ တွဲ ၅၀၀ ဖိုး)</p>
             <p><strong>🛑 ဘရိတ် (Break):</strong> <code>5b 500</code> (၅ ဘရိတ် ၅၀၀ ဖိုး)</p>
+            <p><strong>⚡ Shortcut အသုံးပြုနည်း:</strong> Settings ⚙️ တွင် နာမည်နှင့် ကွန်မန့် (ဥပမာ- <code>set1</code> ➔ <code>123 500, 456 500</code>) သတ်မှတ်ထားပြီး Input တွင် <code>set1</code> ဟု ရိုက်ရုံဖြင့် တိုက်ရိုက်သွင်းနိုင်ပါသည်။</p>
         </div>
         <button onclick="document.getElementById('helpModal').style.display='none'" class="btn-modal btn-modal-save">နားလည်ပါပြီ</button>
     </div>
@@ -438,17 +440,19 @@
         </div>
     </div>
 
-    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;">
-    <h4 style="font-size: 14px; margin-bottom: 8px;">Manage Customers</h4>
-    <div style="background: white; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 6px;">
-        <input type="text" id="newCustName" placeholder="Customer Name" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
-        <div style="display: flex; gap: 4px;">
-            <input type="number" id="newCustPercent" placeholder="3D%" style="flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
-            <input type="number" id="pairCommission" placeholder="တွဲ%" style="flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
-            <input type="number" id="posCommission" placeholder="နေရာ%" style="flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
+            <hr style="margin: 5px 0; border: 0; border-top: 1px solid #ccc;">
+    <h4 style="font-size: 14px; margin-bottom: 4px;">Manage Customers</h4>
+    <div style="background: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; gap: 4px;">
+        <input type="text" id="newCustName" placeholder="Customer Name" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+        <div style="display: flex; gap: 4px; width: 100%;">
+            <input type="number" id="newCustPercent" placeholder="3D%" style="flex: 1; min-width: 0; padding: 6px 4px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; text-align: center;">
+            <input type="number" id="pairCommission" placeholder="တွဲ%" style="flex: 1; min-width: 0; padding: 6px 4px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; text-align: center;">
+            <input type="number" id="posCommission" placeholder="နေရာ%" style="flex: 1; min-width: 0; padding: 6px 4px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; text-align: center;">
         </div>
         <button style="width: 100%; background:#2980b9; color:white; border:none; padding: 8px; border-radius: 4px; font-weight: bold; cursor:pointer;" onclick="addCustomer()">+ Add Customer</button>
     </div>
+
+
     <div id="customerList" style="margin-top: 8px;"></div>
 
     <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;">
