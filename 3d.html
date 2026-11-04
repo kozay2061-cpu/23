@@ -34,16 +34,17 @@
 
         /* Number Grid */
         .number-grid { 
-    flex: 1.5; /* Table ရဲ့ အမြင့်နေရာကို ပိုယူစေရန် (လိုအပ်ပါက 2 ထိ တိုးနိုင်သည်) */
-    padding: 8px; 
-    overflow-y: auto; 
+    flex: 1.5; 
+    padding: 3px !important; 
+    overflow: hidden !important; 
     display: grid; 
     grid-template-columns: repeat(10, 1fr) !important; 
-    gap: 4px; 
-    align-content: stretch; /* အကွက်များကို အောက်ဘက်သို့ ညီညာစွာ ဆန့်ထွက်စေရန် */
+    grid-template-rows: repeat(10, 1fr) !important; /* အတန်း ၁၀ လိုင်း အညီအမျှ အပြည့်ဆံ့စေရန် ဖိအားပေးခြင်း */
+    gap: 2px !important; 
     background: white;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    min-height: 0 !important; /* Flex container အတွင်း အကွက်များ ညှစ်ဝင်သွားစေရန် */
 }
 
         /* Header Buttons */
@@ -120,8 +121,8 @@
         .num-box.winning { background-color: #f1c40f !important; border-color: #f39c12 !important; box-shadow: 0 0 8px #f1c40f; z-index: 5; }
         .num-box.twat-highlight { background-color: #ffbe76 !important; border-color: #f0932b !important; color: #000 !important; box-shadow: 0 0 5px #ffbe76; }
         .num-box.custom-limit-style { border: 2px dashed #e67e22 !important; }
-        .num-val { display: block; font-weight: bold; font-size: 13px; color: #333; line-height: 1.3; }
-        .amt-val { display: block; color: #27ae60; font-size: 11px; font-weight: bold; line-height: 1.3; }
+        .num-val { display: block; font-weight: bold; font-size: 13px; color: #333; line-height: 1.3;}
+        .amt-val { display: block; color: #27ae60; font-size: 12px; font-weight: bold; line-height: 1.3; }
 
         /* Status Bar */
         .status-area { background: white; padding: 12px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -282,7 +283,7 @@
         <button class="btn-header btn-blue" onclick="copyUserCopy()"><i class="fas fa-file-alt"></i> User</button>
         <button class="btn-header btn-red" onclick="copyATinCopy()"><i class="fas fa-share-square"></i> A Tin</button>
         <button class="btn-header btn-dark" onclick="exportImage()"><i class="fas fa-chart-bar"></i> P/L Img</button>
-        <button onclick="location.href='2d.html'" style="background-color: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;"> 👉2Dသို့</button>
+        <button onclick="location.href='2d.html'" style="background-color: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;"> 2D သို့</button>
 
         <div style="grid-column: 1 / -1; background: #2c3e50; color: #f1c40f; padding: 6px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border: 1px solid #f1c40f; margin-top: 2px;">
             <span style="font-size: 13px; color: #bdc3c7;">TOTAL</span>
@@ -388,7 +389,6 @@
     </div>
 
 </div>
-
 <!-- Help Modal -->
 <div id="helpModal" class="modal-backdrop">
     <div class="modal-box" style="max-width: 550px; max-height: 85vh; display: flex; flex-direction: column;">
@@ -408,6 +408,7 @@
             <p><strong>↔️ ရိုးရိုး ထိပ်/နောက်:</strong> <code>1h 500</code> (၁ ထိပ် ဂဏန်း ၁၀၀ စီ)</p>
             <p><strong>🔗 အတွဲ (Pair):</strong> <code>12w 500</code> (၁၂ တွဲ ၅၀၀ ဖိုး)</p>
             <p><strong>🛑 ဘရိတ် (Break):</strong> <code>5b 500</code> (၅ ဘရိတ် ၅၀၀ ဖိုး)</p>
+            <p><strong>⚡ Shortcut အသုံးပြုနည်း:</strong> Settings ⚙️ တွင် နာမည်နှင့် ကွန်မန့် (ဥပမာ- <code>set1</code> ➔ <code>123 500, 456 500</code>) သတ်မှတ်ထားပြီး Input တွင် <code>set1</code> ဟု ရိုက်ရုံဖြင့် တိုက်ရိုက်သွင်းနိုင်ပါသည်။</p>
         </div>
         <button onclick="document.getElementById('helpModal').style.display='none'" class="btn-modal btn-modal-save">နားလည်ပါပြီ</button>
     </div>
@@ -429,7 +430,7 @@
         <div style="display: flex; gap: 6px;">
             <div style="flex: 1;">
                 <label style="font-size: 10px;">3D အဆ</label>
-                <input type="number" id="settingAhSa" value="700" onchange="refreshCalculations()" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
+                <input type="number" id="settingAhSa" value="500" onchange="refreshCalculations()" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
             </div>
             <div style="flex: 1;">
                 <label style="font-size: 10px;">တွဲ အဆ</label>
@@ -442,17 +443,18 @@
         </div>
     </div>
 
-    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;">
-    <h4 style="font-size: 14px; margin-bottom: 8px;">Manage Customers</h4>
-    <div style="background: white; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 6px;">
-        <input type="text" id="newCustName" placeholder="Customer Name" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
-        <div style="display: flex; gap: 4px;">
-            <input type="number" id="newCustPercent" placeholder="3D%" style="flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
-            <input type="number" id="pairCommission" placeholder="တွဲ%" style="flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
-            <input type="number" id="posCommission" placeholder="နေရာ%" style="flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
+        <hr style="margin: 5px 0; border: 0; border-top: 1px solid #ccc;">
+    <h4 style="font-size: 14px; margin-bottom: 4px;">Manage Customers</h4>
+    <div style="background: white; padding: 5px; border-radius: 5px; display: flex; flex-direction: column; gap: 4px;">
+        <input type="text" id="newCustName" placeholder="Customer Name" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+        <div style="display: flex; gap: 4px; width: 100%;">
+            <input type="number" id="newCustPercent" placeholder="3D%" style="flex: 1; min-width: 0; padding: 6px 4px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; text-align: center;">
+            <input type="number" id="pairCommission" placeholder="တွဲ%" style="flex: 1; min-width: 0; padding: 6px 4px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; text-align: center;">
+            <input type="number" id="posCommission" placeholder="နေရာ%" style="flex: 1; min-width: 0; padding: 6px 4px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; text-align: center;">
         </div>
         <button style="width: 100%; background:#2980b9; color:white; border:none; padding: 8px; border-radius: 4px; font-weight: bold; cursor:pointer;" onclick="addCustomer()">+ Add Customer</button>
     </div>
+
     <div id="customerList" style="margin-top: 8px;"></div>
 
     <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;">
@@ -513,8 +515,48 @@
         <button onclick="document.getElementById('historyModal').style.display='none'" class="btn-modal btn-modal-cancel">Close</button>
     </div>
 </div>
+<!-- Custom Confirm Modal -->
+<div id="customConfirmModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 350px; text-align: center; padding: 25px 20px;">
+        <div style="font-size: 35px; margin-bottom: 10px;">⚠️</div>
+        <h3 id="customConfirmTitle" style="color: #2c3e50; margin-bottom: 10px; font-size: 16px;">သတိပေးချက်</h3>
+        <p id="customConfirmMessage" style="font-size: 14px; color: #555; margin-bottom: 20px; line-height: 1.5;"></p>
+        <div class="modal-actions" style="display: flex; gap: 10px;">
+            <button id="customConfirmCancelBtn" class="btn-modal btn-modal-cancel" style="background: #ecf0f1; color: #7f8c8d;">မလုပ်တော့ပါ</button>
+            <button id="customConfirmOkBtn" class="btn-modal btn-modal-save" style="background: #e74c3c; color: white;">သေချაပါတယ်</button>
+        </div>
+    </div>
+</div>
 
 <script>
+  // Custom Confirm အတွက် Helper Function (Async/Await ဖြင့် တစ်ကြိမ်တည်း အဖြေတောင်းရန်)
+    function showCustomConfirm(title, message) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('customConfirmModal');
+            document.getElementById('customConfirmTitle').innerText = title;
+            document.getElementById('customConfirmMessage').innerText = message;
+            modal.style.display = 'flex';
+
+            const okBtn = document.getElementById('customConfirmOkBtn');
+            const cancelBtn = document.getElementById('customConfirmCancelBtn');
+
+            // Event Listener များကို အသစ်တစ်ဖန် သန့်ရှင်းစွာ ချိတ်ဆက်ရန် (Duplicate မဖြစ်စေရန်)
+            const newOkBtn = okBtn.cloneNode(true);
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+            newOkBtn.onclick = () => {
+                modal.style.display = 'none';
+                resolve(true);
+            };
+
+            newCancelBtn.onclick = () => {
+                modal.style.display = 'none';
+                resolve(false);
+            };
+        });
+  }
     // --- ==== LOGIC SECTION ==== ---
     const TRIPLE_NUMBERS = ['000','111','222','333','444','555','666','777','888','999'];
     let allLedgerData = {}, allHistoryBatches = {}, shortcuts = {}, customLimits = {};
@@ -679,8 +721,6 @@ function getKhwayWithPairs3D(str) {
     }
     return [...new Set(results)]; // ထပ်နေသည်များကို ဖယ်ထုတ်မည်
 }
-
-
 // ထပ်တူဂဏန်းများ (kpt အတွက် 111, 222, 333 ...)[span_2](start_span)[span_2](end_span)
     function getTriples3D(str) {
     let results = [];
@@ -688,235 +728,348 @@ function getKhwayWithPairs3D(str) {
     chars.forEach(c => results.push(c + c + c));
     return results;
 }
-    function processInput() {
-        const activeU = [...customers, { name: TOTAL_CUSTOMER_NAME }][activeCustomerIndex];
-        if (activeU.name === TOTAL_CUSTOMER_NAME) return alert("Total View တွင် စာရိုက်၍မရပါ။");
+    async function processInput() {
+    const activeU = [...customers, { name: TOTAL_CUSTOMER_NAME }][activeCustomerIndex];
+    if (activeU.name === TOTAL_CUSTOMER_NAME) return alert("Total View တွင် စာရိုက်၍မရပါ။");
 
-        const input = document.getElementById('mainInput');
-        let val = input.value.trim();
-        if (!val) return;
-        
-        input.value = '';
+    const input = document.getElementById('mainInput');
+    let val = input.value.trim();
+    if (!val) return;
+    
+    input.value = '';
 
-        val = val.replace(/အစ်ကို|ညီလေး|ဆရာ|ကို|ဦး|ဒေါ်|ဗျာ|ခင်ဗျာ|ရှင့်|နော်|ok|help|plz|hi|hello|mingalarpar/gi, ' ');
-        val = val.replace(/မနက်|ညနေ|နေ့လည်|နံ|နံက်|ည|morning|evening|am|pm/gi, ' ');
-        val = val.replace(/ကျေးဇူး|တင်ပါတယ်|ရလား|ရမလား|လုပ်ပေးပါ|ထိုးမယ်|ပို|ဆို|ထဲက|သီးသန့်|အပြီး|စီ|3D|3d/gi, ' ');
+    const customerName = activeU.name;
+    if (!allLedgerData[customerName]) allLedgerData[customerName] = {};
+    if (!allHistoryBatches[customerName]) allHistoryBatches[customerName] = {};
 
-        const customerName = activeU.name;
-        if (!allLedgerData[customerName]) allLedgerData[customerName] = {};
-        if (!allHistoryBatches[customerName]) allHistoryBatches[customerName] = {};
-
-        let processedVal = shortcuts[val.toLowerCase()] || val;
-        const currentBatch = { id: Date.now(), inputText: val, items: [] };
-
-        const addD = (n, a) => {
-            let strN = String(n);
-            if (strN.length < 3 && !strN.includes('*') && !strN.includes('_')) {
-                strN = strN.padStart(3, '0');
-            }
-            if (!allLedgerData[customerName][strN]) allLedgerData[customerName][strN] = 0;
-            allLedgerData[customerName][strN] += a;
-            currentBatch.items.push({ num: strN, amt: a });
-        };
-
-        const myanmarToEnglishNumbers = (text) => {
-            const myanmarNumbers = ['၀', '၁', '၂', '၃', '၄', '၅', '၆', '၇', '၈', '၉'];
-            const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-            let result = text;
-            for (let i = 0; i < myanmarNumbers.length; i++) {
-                let regex = new RegExp(myanmarNumbers[i], 'g');
-                result = result.replace(regex, englishNumbers[i]);
-            }
-            return result;
-        };
-
-        processedVal.split(/\n+/).forEach(rawLine => {
-            let engLine = myanmarToEnglishNumbers(rawLine);
-            let cl = cleanInput(engLine).replace(/,/g, '').trim();
-            if (!cl || cl.includes('---') || cl.toLowerCase().includes('total') || cl.includes('ဒိုင်ချုပ်')) return;
-
-            cl.replace(/\/\//g, ',').split(',').forEach(seg => {
-                let s = seg.trim();
-                if (!s) return;
-
-                // 📌 ပုံစံအသစ်: အစက်များဖြင့် ချိတ်ဆက်ထားသော ဂဏန်းများ နောက်ဆုံးတွင် =ငွေပမာဏ ပါခြင်း (ဥပမာ- 252.472...=50)
-                let dotGroupMatch = s.match(/^(.*?)[\s=]+(\d+)$/);
-                if (dotGroupMatch) {
-                    let prefPart = dotGroupMatch[1];
-                    let amtVal = parseInt(dotGroupMatch[2], 10);
-                    let nmsPart = prefPart.match(/\d{3}/g);
-                    if (nmsPart && amtVal > 0) {
-                        nmsPart.forEach(n => addD(n, amtVal));
-                        return; // ပြီးသွားပြီဖြစ်므로 ကျန်တာတွေကို ကျော်မည်
-                    }
-                }
-
-                // kpt ကို kp ထက် အပေါ်မှာ အရင်တင်စစ်ပြီး \b ထည့်ပါ
-                let kpt_m = s.match(/^(\d{4,})\s*(kpt)\b[^\d]*(\d+)$/i);
-                let kp_m = s.match(/^(\d{4,})\s*(kp)\b[^\d]*(\d+)$/i);
-                let km = s.match(/^(\d{4,})\s*(k|ခွေ)[^\d]*(\d+)$/i);
-                let tm_dynamic = s.match(/^(\d{2,})\s*(try|tr|t|ထွိုင်|ထိုင်)[^\d]*(\d+)$/i);
-                let tm_standalone = s.match(/^(try|ထွိုင်|ထိုင်)[^\d]*(\d+)$/i);
-                let pos_m = s.match(/^(\d)\s*(နေရာ|ထိုင်|pos|position)[_\s]*(ထိပ်|ထ|h|ht|အလယ်|လ|m|l|နောက်|န|n)/i);
-                let sm = s.match(/^(\d)\s*(ထိပ်|ထ|h|ht|အလယ်|လ|m|l|နောက်|န|n|အပါ|ပါ|p)/i);
-                let wm = s.match(/^(\d{2})\s*(w|တွဲ)[^\d]*(\d+)$/i);
-                let bm = s.match(/^(\d{1,2})\s*(break|b|ဘရိတ်|ဘရ)/i);
-
-                if (km || kp_m || kpt_m || tm_dynamic || tm_standalone || pos_m || sm || wm || bm) {
-                    let amt = 0;
-                    let amtMatch = s.match(/(\d+)$/);
-                    if (amtMatch) amt = parseInt(amtMatch[1], 10);
-                    
-                   if (amt > 0) {
-                        if (kpt_m) {
-                            let baseStr = kpt_m[1];
-                            let combinations = [...new Set([
-                                ...getKhway3D(baseStr), 
-                                ...getKhwayWithPairs3D(baseStr), 
-                                ...getTriples3D(baseStr)
-                            ])];
-                            combinations.forEach(n => addD(n, amt));
-                        } else if (kp_m) {
-                            let baseStr = kp_m[1];
-                            let combinations = [...new Set([...getKhway3D(baseStr), ...getKhwayWithPairs3D(baseStr)])];
-                            combinations.forEach(n => addD(n, amt));
-                        } else if (km) {
-                            let combinations = getKhway3D(km[1]); 
-                            combinations.forEach(n => addD(n, amt));
-                        } else if (tm_dynamic) {
-                            let chars = tm_dynamic[1].split(''); 
-                            chars.forEach(numChar => {
-                                addD(numChar + numChar + numChar, amt); 
-                            });
-                        } else if (tm_standalone) {
-                            TRIPLE_NUMBERS.forEach(n => addD(n, amt));
-                        } else if (wm) {
-                            let pairNum = wm[1];
-                            addD(pairNum + "_W", amt); 
-                        } else if (pos_m) {
-                            let d = pos_m[1];
-                            let a = pos_m[3].toLowerCase();
-                            let positionTag = '';
-                            if (['ထိပ်', 'ထ', 'h' ,'ht'].includes(a)) positionTag = '_H';
-                            else if (['အလယ်', 'လ', 'L','m'].includes(a)) positionTag = '_M';
-                            else if (['နောက်', 'န', 'n'].includes(a)) positionTag = '_T';
-                            
-                            if(positionTag) addD(d + positionTag, amt);
-                        } else if (sm) {
-                            let d = sm[1];
-                            let a = sm[2].toLowerCase();
-                            let c = '';
-                            if (['ထိပ်', 'ထ', 'h' ,'ht'].includes(a)) c = 'f';
-                            else if (['အလယ်', 'လ', 'L','m'].includes(a)) c = 'm';
-                            else if (['နောက်', 'န', 'n'].includes(a)) c = 'b';
-                            else if (['အပါ', 'ပါ', 'p'].includes(a)) c = 'i';
-                            
-                            if (c === 'f') for (let i = 0; i < 100; i++) addD(d + i.toString().padStart(2, '0'), amt);
-                            else if (c === 'm') for (let x = 0; x < 10; x++) for (let y = 0; y < 10; y++) addD(`${x}${d}${y}`, amt);
-                            else if (c === 'b') for (let i = 0; i < 100; i++) addD(i.toString().padStart(2, '0') + d, amt);
-                            else if (c === 'i') for (let i = 0; i < 1000; i++) { let n = i.toString().padStart(3, '0'); if (n.includes(d)) addD(n, amt); }
-                        } else if (bm) {
-                            let bv = parseInt(bm[1], 10);
-                            for (let i = 0; i < 1000; i++) {
-                                let n = i.toString().padStart(3, '0');
-                                if (n.split('').reduce((a, b) => a + parseInt(b, 10), 0) === bv) addD(n, amt);
-                            }
-                        }
-                    }
-                    return;
-                }
-
-                let dA = 0, rA = 0, pref = "";
-                const reverseSymbols = '(?:r|အာ|@|©|®)';
-
-                // ပုံစံ အသစ်: 252 532 5000r1000 (ဒဲ့ငွေနဲ့ အာငွေ နှစ်ခုလုံးပါသောပုံစံ)
-                const m_da_ra_combined = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
-                
-                // ဒဲ့ငွေနေရာမှာ 3D ဂဏန်း (ဥပမာ- 234) ပါမပါ သေချာစစ်ဆေးခြင်း (123 234 r1000 ကဲ့သို့သောပုံစံများကို ကာကွယ်ရန်)
-                let isActuallyDual = false;
-                if (m_da_ra_combined) {
-                    let potentialDa = m_da_ra_combined[2];
-                    // အကယ်၍ ဒဲ့နေရာမှာပါတဲ့ကိန်းက ၃ လုံးဂဏန်း (ဥပမာ- 234) ဖြစ်နေပြီး ရှေ့မှာလည်း ဂဏန်းတွေပါရင် ဒါဟာ ဒဲ့ငွေမဟုတ်ဘဲ နောက်ထပ်ဂဏန်းတစ်ခု ဖြစ်ပါတယ်
-                    if (/^\d{3}$/.test(potentialDa)) {
-                        isActuallyDual = true;
-                    }
-                }
-
-                // ပုံစံ ၁: 123 234 345 r1000 500
-                const m_r_da_ra = s.match(new RegExp(`^(.*?)\\s+(?:${reverseSymbols}\\s+(\\d+)\\s+(\\d+)|(\\d+)\\s*${reverseSymbols}\\s+(\\d+))$`, 'i'));
-                
-                // ပုံစံ ၂: 123 234 345 1000 r (အားလုံး အာ 1000)
-                const m_ra_only = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*$`, 'i'));
-
-                // ပုံစံ ၃: 123 234 r1000 (သို့) 451-251-148 R 250
-                const multiRMatch = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
-
-                if (m_da_ra_combined && !isActuallyDual) {
-                    pref = m_da_ra_combined[1];
-                    dA = parseInt(m_da_ra_combined[2], 10); // ဒဲ့ (Straight)
-                    rA = parseInt(m_da_ra_combined[3], 10); // အာ (Reverse)
-                } else if (m_r_da_ra) {
-                    pref = m_r_da_ra[1];
-                    dA = parseInt(m_r_da_ra[2] || m_r_da_ra[4], 10);
-                    rA = parseInt(m_r_da_ra[3] || m_r_da_ra[5], 10);
-                } else if (m_ra_only) {
-                    pref = m_ra_only[1];
-                    rA = parseInt(m_ra_only[2], 10);
-                } else if (multiRMatch) {
-                    pref = multiRMatch[1];
-                    rA = parseInt(multiRMatch[2], 10);
-                } else if (isActuallyDual) {
-                    // 123 234 r1000 ကဲ့သို့သော ပုံစံအတွက် (ဂဏန်းအားလုံးကို rA သီးသန့်ပေးရန်)
-                    pref = m_da_ra_combined[1] + " " + m_da_ra_combined[2];
-                    rA = parseInt(m_da_ra_combined[3], 10);
-                } else {
-                    const m_dae_r = s.match(new RegExp(`^(.*?)\\s*ဒဲ့\\s*(\\d+)\\s*[\\/\\-]?\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
-                    const m1 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
-                    const m2 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s+(\\d+)$`, 'i'));
-                    const m3 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
-                    
-                    const m5_spaced = s.match(/^((?:\d{3}|\d{2}\*|\d\*\d|\*\d{2}|[\s\-\/]+)+)\s+(?:ဒဲ့|-|=)?\s*(\d+)$/i);
-                    const m5_dae = s.match(/^(.*?)\s*ဒဲ့\s*(\d+)$/i);
-
-                    if (m_dae_r) { pref = m_dae_r[1]; dA = parseInt(m_dae_r[2], 10); rA = parseInt(m_dae_r[3], 10); }
-                    else if (m1) { pref = m1[1]; dA = parseInt(m1[2], 10); rA = parseInt(m1[3], 10); }
-                    else if (m2) { pref = m2[1]; dA = parseInt(m2[2], 10); rA = parseInt(m2[3], 10); }
-                    else if (m3) { pref = m3[1]; rA = parseInt(m3[2], 10); }
-                    else if (m5_spaced) { pref = m5_spaced[1]; dA = parseInt(m5_spaced[2], 10); }
-                    else if (m5_dae) { pref = m5_dae[1]; dA = parseInt(m5_dae[2], 10); }
-                    else { pref = s; }
-                }
-                const finalAmount = dA || rA;
-                let cp = pref.replace(/[.\-,\s/huri]+/g, ' ').trim();
-                let nms = cp.match(/\d{3}|\d{2}\*|\d\*\d|\*\d{2}/g);
-
-                if (nms) {
-                    nms.forEach(m => {
-                        if (m.includes('*')) {
-                            for (let i = 0; i < 10; i++) addD(m.replace('*', i.toString()), finalAmount);
-                        } else if (/^\d{3}$/.test(m)) {
-                            if (dA > 0) addD(m, dA);
-                            else if (rA > 0) addD(m, rA);
-
-                            if (rA > 0) {
-                                let perms = getPermutations(m);
-                                perms.forEach(p => {
-                                    if (p !== m) addD(p, rA);
-                                });
-                            }
-                        }
-                    });
-                }
-            });
-        });
-
-        if (currentBatch.items.length > 0) {
-            allHistoryBatches[customerName][currentBatch.id] = currentBatch;
-            renderHistoryLog();
-            loadGrid(currentStartDigit);
-            saveData();
+    // 🛑 ရိုက်ထည့်လိုက်သော စာသားအမိန့် (Input Text) တစ်ခုလုံး ယခင်က ထည့်သွင်းထားပြီးသား ဟုတ်မဟုတ် စစ်ဆေးခြင်း
+    let isDuplicateBatch = false;
+    const existingBatches = allHistoryBatches[customerName] || {};
+    for (const bId in existingBatches) {
+        if (existingBatches[bId].inputText.trim().toLowerCase() === val.toLowerCase()) {
+            isDuplicateBatch = true;
+            break;
         }
     }
+
+    if (isDuplicateBatch) {
+        let userAccepted = await showCustomConfirm("စာရင်းထပ်နေပါသည်", `ဤစာရင်းအမိန့် (${val}) ကို ယခင်က ထည့်သွင်းပြီးသား ဖြစ်ပါသည်။ ထပ်မံထည့်သွင်းမည်မှာ သေချာပါသလား?`);
+        if (!userAccepted) return; // Cancel နှိပ်လျှင် မထည့်တော့ပါ
+    }
+
+    let processedVal = shortcuts[val.toLowerCase()] || val;
+    const currentBatch = { id: Date.now(), inputText: val, items: [] };
+
+    const addD = (n, a) => {
+        let strN = String(n);
+        if (strN.length < 3 && !strN.includes('*') && !strN.includes('_')) {
+            strN = strN.padStart(3, '0');
+        }
+
+        if (!allLedgerData[customerName][strN]) allLedgerData[customerName][strN] = 0;
+        allLedgerData[customerName][strN] += a;
+        currentBatch.items.push({ num: strN, amt: a });
+    };
+
+    const myanmarToEnglishNumbers = (text) => {
+        const myanmarNumbers = ['၀', '၁', '၂', '၃', '၄', '၅', '၆', '၇', '၈', '၉'];
+        const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        let result = text;
+        for (let i = 0; i < myanmarNumbers.length; i++) {
+            let regex = new RegExp(myanmarNumbers[i], 'g');
+            result = result.replace(regex, englishNumbers[i]);
+        }
+        return result;
+    };
+
+    for (let rawLine of processedVal.split(/\n+/)) {
+        let engLine = myanmarToEnglishNumbers(rawLine);
+        let cl = cleanInput(engLine).replace(/,/g, '').trim();
+        if (!cl || cl.includes('---') || cl.toLowerCase().includes('total') || cl.includes('ဒိုင်ချုပ်')) continue;
+
+        for (let seg of cl.replace(/\/\//g, ',').split(',')) {
+            let s = seg.trim();
+            if (!s) continue;
+            
+            let exactMultiRMatch = s.match(/^((?:\d{3}[\s,]*)+)\s*(?:r|အာ|@|©|®)\s*(\d+)$/i);
+            if (exactMultiRMatch) {
+                let numStringPart = exactMultiRMatch[1];
+                let rAmt = parseInt(exactMultiRMatch[2], 10);
+                let allNums = numStringPart.match(/\d{3}/g);
+                if (allNums && rAmt > 0) {
+                    allNums.forEach(m => {
+                        addD(m, rAmt);
+                        let perms = getPermutations(m);
+                        perms.forEach(p => { if (p !== m) addD(p, rAmt); });
+                    });
+                    continue;
+                }
+            }
+
+            let symbolJoinedDualMatch = s.match(/^([\d\.\-\/\,\s]+?)\s+(\d+)\s*(?:r|အာ|@|©|®)\s*(\d+)$/i);
+            if (symbolJoinedDualMatch) {
+                let numStringPart = symbolJoinedDualMatch[1];
+                let daAmt = parseInt(symbolJoinedDualMatch[2], 10);
+                let rAmt = parseInt(symbolJoinedDualMatch[3], 10);
+                let allNums = numStringPart.match(/\b\d{3}\b/g);
+                if (allNums) {
+                    allNums.forEach(m => {
+                        if (daAmt > 0) addD(m, daAmt);
+                        if (rAmt > 0) {
+                            let perms = getPermutations(m);
+                            perms.forEach(p => { if (p !== m) addD(p, rAmt); });
+                        }
+                    });
+                    continue;
+                }
+            }
+
+            let dualSpacedMatch = s.match(/^([\d\s]+?)\s+(\d+)\s*(?:r|အာ|@|©|®)\s*(\d+)$/i);
+            if (dualSpacedMatch) {
+                let prePart = dualSpacedMatch[1].replace(/\s+/g, '');
+                let daAmt = parseInt(dualSpacedMatch[2], 10);
+                let rAmt = parseInt(dualSpacedMatch[3], 10);
+                let nms = prePart.match(/\d{3}/g);
+                if (nms) {
+                    nms.forEach(m => {
+                        if (daAmt > 0) addD(m, daAmt);
+                        if (rAmt > 0) {
+                            let perms = getPermutations(m);
+                            perms.forEach(p => { if (p !== m) addD(p, rAmt); });
+                        }
+                    });
+                    continue;
+                }
+            }
+
+            let symbolDualRMatch = s.match(/^([\d\.\-\/\,\s]+?)\s*(?:r|အာ|@|©|®)\s*(\d+)\s+(\d+)$/i);
+            if (symbolDualRMatch) {
+                let numStringPart = symbolDualRMatch[1];
+                let daAmt = parseInt(symbolDualRMatch[2], 10);
+                let rAmt = parseInt(symbolDualRMatch[3], 10);
+                let allNums = numStringPart.match(/\d{3}/g);
+                if (allNums) {
+                    allNums.forEach(m => {
+                        if (daAmt > 0) addD(m, daAmt);
+                        if (rAmt > 0) {
+                            let perms = getPermutations(m);
+                            perms.forEach(p => { if (p !== m) addD(p, rAmt); });
+                        }
+                    });
+                    continue;
+                }
+            }
+
+            let symbolSingleRMatch = s.match(/^([\d\.\-\/\,\s]+?)\s*(?:r|အာ|@|©|®)\s*(\d+)$/i);
+            if (symbolSingleRMatch) {
+                let numStringPart = symbolSingleRMatch[1];
+                let rAmt = parseInt(symbolSingleRMatch[2], 10);
+                let allNums = numStringPart.match(/\d{3}/g);
+                if (allNums && rAmt > 0) {
+                    allNums.forEach(m => {
+                        addD(m, rAmt);
+                        let perms = getPermutations(m);
+                        perms.forEach(p => { if (p !== m) addD(p, rAmt); });
+                    });
+                    continue;
+                }
+            }
+
+            let customSpacedMatch = s.match(/^([\d\s]+?)\s*(kpt|kp|k|ခွေ|အာ|r)\s*(\d+)$/i);
+            if (customSpacedMatch) {
+                let prePart = customSpacedMatch[1].replace(/\s+/g, '');
+                let cmdType = customSpacedMatch[2].toLowerCase();
+                let amtVal = parseInt(customSpacedMatch[3], 10);
+                if (amtVal > 0) {
+                    if (cmdType === 'kpt') {
+                        if (prePart.length >= 3) {
+                            let combinations = [...new Set([...getKhway3D(prePart), ...getKhwayWithPairs3D(prePart), ...getTriples3D(prePart)])];
+                            combinations.forEach(n => addD(n, amtVal));
+                        }
+                    } else if (cmdType === 'kp') {
+                        if (prePart.length >= 3) {
+                            let combinations = [...new Set([...getKhway3D(prePart), ...getKhwayWithPairs3D(prePart)])];
+                            combinations.forEach(n => addD(n, amtVal));
+                        }
+                    } else if (cmdType === 'k' || cmdType === 'ခွေ') {
+                        if (prePart.length >= 3) {
+                            let combinations = getKhway3D(prePart);
+                            combinations.forEach(n => addD(n, amtVal));
+                        }
+                    } else {
+                        let nms = prePart.match(/\d{3}/g);
+                        if (nms) {
+                            nms.forEach(m => {
+                                addD(m, amtVal);
+                                let perms = getPermutations(m);
+                                perms.forEach(p => { if (p !== m) addD(p, amtVal); });
+                            });
+                        }
+                    }
+                    continue;
+                }
+            }
+
+            let dotGroupMatch = s.match(/^(.*?)[\s=]+(\d+)$/);
+            if (dotGroupMatch) {
+                let prefPart = dotGroupMatch[1];
+                let amtVal = parseInt(dotGroupMatch[2], 10);
+                let nmsPart = prefPart.match(/\d{3}/g);
+                if (nmsPart && amtVal > 0) {
+                    nmsPart.forEach(n => addD(n, amtVal));
+                    continue;
+                }
+            }
+
+            let kpt_m = s.match(/^(\d{4,})\s*(kpt)\b\s*(\d+)$/i);
+            let kp_m = s.match(/^(\d{4,})\s*(kp)\b\s*(\d+)$/i);
+            let km = s.match(/^(\d{4,})\s*(k|ခွေ)\s*(\d+)$/i);
+            let tm_dynamic = s.match(/^(\d{2,})\s*(try|tr|t|ထွိုင်|ထိုင်)\s*(\d+)$/i);
+            let tm_standalone = s.match(/^(try|ထွိုင်|ထိုင်)\s*(\d+)$/i);
+            let pos_m = s.match(/^(\d)\s*(နေရာ|ထိုင်|pos|position)[_\s]*(ထိပ်|ထ|h|ht|အလယ်|လ|m|l|နောက်|န|n)\s*(\d+)/i);
+            let sm = s.match(/^(\d)\s*(ထိပ်|ထ|h|ht|အလယ်|လ|m|l|နောက်|န|n|အပါ|ပါ|p)\s*(\d+)/i);
+            let wm = s.match(/^(\d{2})\s*(w|တွဲ)\s*(\d+)$/i);
+            let bm = s.match(/^(\d{1,2})\s*(break|b|ဘရိတ်|ဘရ)\s*(\d+)$/i);
+
+            if (km || kp_m || kpt_m || tm_dynamic || tm_standalone || pos_m || sm || wm || bm) {
+                let amt = 0;
+                let amtMatch = s.match(/(\d+)$/);
+                if (amtMatch) amt = parseInt(amtMatch[1], 10);
+                
+                if (amt > 0) {
+                    if (kpt_m) {
+                        let baseStr = kpt_m[1];
+                        let combinations = [...new Set([...getKhway3D(baseStr), ...getKhwayWithPairs3D(baseStr), ...getTriples3D(baseStr)])];
+                        combinations.forEach(n => addD(n, amt));
+                    } else if (kp_m) {
+                        let baseStr = kp_m[1];
+                        let combinations = [...new Set([...getKhway3D(baseStr), ...getKhwayWithPairs3D(baseStr)])];
+                        combinations.forEach(n => addD(n, amt));
+                    } else if (km) {
+                        let combinations = getKhway3D(km[1]); 
+                        combinations.forEach(n => addD(n, amt));
+                    } else if (tm_dynamic) {
+                        let chars = tm_dynamic[1].split(''); 
+                        chars.forEach(numChar => { addD(numChar + numChar + numChar, amt); });
+                    } else if (tm_standalone) {
+                        TRIPLE_NUMBERS.forEach(n => addD(n, amt));
+                    } else if (wm) {
+                        let pairNum = wm[1];
+                        addD(pairNum + "_W", amt); 
+                    } else if (pos_m) {
+                        let d = pos_m[1];
+                        let a = pos_m[3].toLowerCase();
+                        let positionTag = '';
+                        if (['ထိပ်', 'ထ', 'h' ,'ht'].includes(a)) positionTag = '_H';
+                        else if (['အလယ်', 'လ', 'L','m'].includes(a)) positionTag = '_M';
+                        else if (['နောက်', 'န', 'n'].includes(a)) positionTag = '_T';
+                        if(positionTag) addD(d + positionTag, amt);
+                    } else if (sm) {
+                        let d = sm[1];
+                        let a = sm[2].toLowerCase();
+                        let c = '';
+                        if (['ထိပ်', 'ထ', 'h' ,'ht'].includes(a)) c = 'f';
+                        else if (['အလယ်', 'လ', 'L','m'].includes(a)) c = 'm';
+                        else if (['နောက်', 'န', 'n'].includes(a)) c = 'b';
+                        else if (['အပါ', 'ပါ', 'p'].includes(a)) c = 'i';
+                        
+                        if (c === 'f') for (let i = 0; i < 100; i++) addD(d + i.toString().padStart(2, '0'), amt);
+                        else if (c === 'm') for (let x = 0; x < 10; x++) for (let y = 0; y < 10; y++) addD(`${x}${d}${y}`, amt);
+                        else if (c === 'b') for (let i = 0; i < 100; i++) addD(i.toString().padStart(2, '0') + d, amt);
+                        else if (c === 'i') for (let i = 0; i < 1000; i++) { let n = i.toString().padStart(3, '0'); if (n.includes(d)) addD(n, amt); }
+                    } else if (bm) {
+                        let bv = parseInt(bm[1], 10);
+                        for (let i = 0; i < 1000; i++) {
+                            let n = i.toString().padStart(3, '0');
+                            if (n.split('').reduce((a, b) => a + parseInt(b, 10), 0) === bv) addD(n, amt);
+                        }
+                    }
+                }
+                continue;
+            }
+
+            let dA = 0, rA = 0, pref = "";
+            const reverseSymbols = '(?:r|အာ|@|©|®)';
+            
+            const m_r_only_spaced = s.match(new RegExp(`^([\\d,\\s]+?)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
+            const m_da_ra_combined = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
+            
+            let isActuallyDual = false;
+            if (m_da_ra_combined) {
+                let potentialDa = m_da_ra_combined[2];
+                if (/^\d{3}$/.test(potentialDa)) isActuallyDual = true;
+            }
+            
+            const m_r_da_ra = s.match(new RegExp(`^(.*?)\\s+(?:${reverseSymbols}\\s+(\\d+)\\s+(\\d+)|(\\d+)\\s*${reverseSymbols}\\s+(\\d+))$`, 'i'));
+            const m_ra_only = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*$`, 'i'));
+            const multiRMatch = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
+            
+            if (m_r_only_spaced && !/\d{3}\s+\d{3}/.test(m_r_only_spaced[1])) {
+                pref = m_r_only_spaced[1];
+                rA = parseInt(m_r_only_spaced[2], 10);
+            } else if (m_da_ra_combined && !isActuallyDual) {
+                pref = m_da_ra_combined[1];
+                dA = parseInt(m_da_ra_combined[2], 10);
+                rA = parseInt(m_da_ra_combined[3], 10);
+            } else if (m_r_da_ra) {
+                pref = m_r_da_ra[1];
+                dA = parseInt(m_r_da_ra[2] || m_r_da_ra[4], 10);
+                rA = parseInt(m_r_da_ra[3] || m_r_da_ra[5], 10);
+            } else if (m_ra_only) {
+                pref = m_ra_only[1];
+                rA = parseInt(m_ra_only[2], 10);
+            } else if (multiRMatch) {
+                pref = multiRMatch[1];
+                rA = parseInt(multiRMatch[2], 10);
+            } else if (isActuallyDuplicateInput = isActuallyDual) {
+                pref = m_da_ra_combined[1] + " " + m_da_ra_combined[2];
+                rA = parseInt(m_da_ra_combined[3], 10);
+            } else {
+                const m_dae_r = s.match(new RegExp(`^(.*?)\\s*ဒဲ့\\s*(\\d+)\\s*[\\/\\-]?\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
+                const m1 = s.match(new RegExp(`^(.*?)\\s+(\\d+)\\s*${reverseSymbols}\\s*(\\d+)$`, 'i'));
+                const m2 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s+(\\d+)$`, 'i'));
+                const m3 = s.match(new RegExp(`^(.*?)\\s*${reverseSymbols}\\s*(\\d+)\\s*$`, 'i'));
+                
+                const m5_spaced = s.match(/^((?:\d{3}|\d{2}\*|\d\*\d|\*\d{2}|[\s\-\/]+)+)\s+(?:ဒဲ့|-|=)?\s*(\d+)$/i);
+                const m5_dae = s.match(/^(.*?)\s*ဒဲ့\s*(\d+)$/i);
+
+                if (m_dae_r) { pref = m_dae_r[1]; dA = parseInt(m_dae_r[2], 10); rA = parseInt(m_dae_r[3], 10); }
+                else if (m1) { pref = m1[1]; dA = parseInt(m1[2], 10); rA = parseInt(m1[3], 10); }
+                else if (m2) { pref = m2[1]; dA = parseInt(m2[2], 10); rA = parseInt(m2[3], 10); }
+                else if (m3) { pref = m3[1]; rA = parseInt(m3[2], 10); }
+                else if (m5_spaced) { pref = m5_spaced[1]; dA = parseInt(m5_spaced[2], 10); }
+                else if (m5_dae) { pref = m5_dae[1]; dA = parseInt(m5_dae[2], 10); }
+                else { pref = s; }
+            }
+            const finalAmount = dA || rA;
+            let cp = pref.replace(/[.\-,\s/huri]+/g, ' ').trim();
+            let nms = cp.match(/\d{3}|\d{2}\*|\d\*\d|\*\d{2}/g);
+
+            if (nms) {
+                nms.forEach(m => {
+                    if (m.includes('*')) {
+                        for (let i = 0; i < 10; i++) addD(m.replace('*', i.toString()), finalAmount);
+                    } else if (/^\d{3}$/.test(m)) {
+                        if (dA > 0) addD(m, dA);
+                        else if (rA > 0) addD(m, rA);
+
+                        if (rA > 0) {
+                            let perms = getPermutations(m);
+                            perms.forEach(p => { if (p !== m) addD(p, rA); });
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    if (currentBatch.items.length > 0) {
+        allHistoryBatches[customerName][currentBatch.id] = currentBatch;
+        renderHistoryLog();
+        loadGrid(currentStartDigit);
+        saveData();
+    }
+}
 
     function cleanInput(str){ const m = {'၀':'0','၁':'1','၂':'2','၃':'3','၄':'4','၅':'5','၆':'6','၇':'7','၈':'8','၉':'9'}; return str.replace(/[၀-၉]/g, c => m[c]||c); }
     function checkWin(){ if(document.getElementById('winInput').value.trim().length%3===0) loadGrid(currentStartDigit); }
@@ -1404,16 +1557,21 @@ function getKhwayWithPairs3D(str) {
         }
     }
 
-    function deleteSelected(){ 
-        const u = customers[activeCustomerIndex]; 
-        if(!u) return; 
+    async function deleteSelected() { 
+        const activeU = [...customers, { name: TOTAL_CUSTOMER_NAME }][activeCustomerIndex];
+        if (!activeU || activeU.name === TOTAL_CUSTOMER_NAME) {
+            return alert("Total View တွင် စာရင်းဖျက်၍မရပါ။ သက်ဆိုင်ရာ Customer Tab သို့ သွား၍ ဖျက်ပါ။");
+        }
+        const u = activeU;
         const items = document.querySelectorAll('.history-item.selected'); 
-        if(items.length===0) return alert("ဖျက်လိုသည့် စာရင်းများကို အရင်ရွေးပါ");
+        if(items.length === 0) return alert("ဖျက်လိုသည့် စာရင်းများကို အရင်ရွေးပါ");
         
-        if(confirm("ရွေးထားသည်များကို ဖျက်မလား?")){ 
+        // 👈 မူရင်း confirm အစား Custom Modal ကို သုံးခြင်း
+        let userAccepted = await showCustomConfirm("စာရင်းဖျက်ရန် အတည်ပြုခြင်း", "ရွေးထားသည်များကို ဖျက်မှာ သေချာပါသလား?");
+        if(userAccepted){ 
             items.forEach(item => { 
                 const id = item.getAttribute('data-batch-id'); 
-                const b = allHistoryBatches[u.name][id]; 
+                const b = allHistoryBatches[u.name] ? allHistoryBatches[u.name][id] : null; 
                 if(b){ 
                     b.items.forEach(d => { 
                         if(allLedgerData[u.name][d.num]){ 
@@ -1426,6 +1584,7 @@ function getKhwayWithPairs3D(str) {
                 } 
             }); 
             loadGrid(currentStartDigit); 
+            renderHistoryLog();
             saveData(); 
         }
     }
@@ -1456,8 +1615,26 @@ function getKhwayWithPairs3D(str) {
     }
     function deleteShortcut(k){ if(confirm("Delete shortcut?")){ delete shortcuts[k]; renderShortcutsUI(); saveData(); } }
 
-    function clearAllData(){ if(confirm("⚠️ စာရင်းအချက်အလက်အားလုံးကို ရှင်းလင်းမှာ သေချာပါသလား?")){ localStorage.clear(); location.reload(); } }
-
+    async function clearAllData() {
+        // 👈 မူရင်း confirm အစား Custom Modal ကို သုံးခြင်း
+        let userAccepted = await showCustomConfirm("အချက်အလက် ရှင်းလင်းခြင်း", "⚠️ ထည့်သွင်းထားသော စာရင်းဂဏန်းများနှင့် ငွေပမာဏများ အားလုံးကို ရှင်းလင်းမှာ သေချာပါသလား? (Customer များနှင့် Settings များ ပျက်မည်မဟုတ်ပါ)");
+        if (userAccepted) {
+            allLedgerData = {};
+            allHistoryBatches = {};
+            
+            customers.forEach(c => {
+                allLedgerData[c.name] = {};
+                allHistoryBatches[c.name] = {};
+            });
+            
+            saveData();
+            loadGrid(currentStartDigit);
+            renderHistoryLog();
+            refreshCalculations();
+            
+            alert("✅ စာရင်းဂဏန်းများနှင့် ငွေပမာဏများ အားလုံး ရှင်းလင်းပြီးပါပြီ။");
+        }
+    }
     function saveData(){ 
         const d = {
             allLedger: allLedgerData,
