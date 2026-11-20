@@ -733,7 +733,7 @@ input, textarea, select, .tab, .data-table td, .report-table td, .report-table t
         <div class="help-section">
             <h3>⚡ အထူးပြု အုပ်စုများ</h3>
             <div style="display:grid; <b> font-size:16px; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div><span class="cmd-code">ap / အပူး / အပူးစုံ / ပူး / အပူး၁၀ကွက် / အပူး10ကွက်</span> - အပူး (၀၀-၉၉)</div>
+                <div><span class="cmd-code">ap / အပူး / ပူး / အပူး၁၀ကွက် / အပူး10ကွက်</span> - အပူး (၀၀-၉၉)</div>
                 <div><span class="cmd-code">pw / ပါဝါ / power</span> - ပါဝါဂဏန်းများ</div>
                 <div><span class="cmd-code">nk / နက္ခတ်</span> - နက္ခတ်ဂဏန်းများ</div>
                 <div><span class="cmd-code">bro / ညီကို</span> - ညီအစ်ကိုဂဏန်းများ</div>
@@ -2150,7 +2150,7 @@ function copySplitOverLimitText() {
     CustomConfirm.show("✅ Split စာရင်းကို အပိုင်း (၁) နှင့် (၂) အဖြစ် R ပုံစံဖြင့် Copy ကူးပြီးပါပြီ!");
 }
 
-  function processInput() {
+function processInput() {
     const field = $('rawInput'); 
     if (!field.value.trim() || activeIndex === -1) return;
 
@@ -2176,9 +2176,7 @@ function copySplitOverLimitText() {
         line = line.replace(/(\d+)\s*(?:ခွေပူး|ခွေ\s*ပူး|အပူးပါခွေ|အပူးပါ\s*ခွေ|ခွေအပူးပါ|ခွေ\s*အပူးပါ|ခွေp|ခွေa|ခပ|ka)\s*(\d+)/gi, '$1 kp $2');
         line = line.replace(/(?:ခွေပူး|ခွေ\s*ပူး|အပူးပါခွေ|အပူးပါ\s*ခွေ|ခွေအပူးပါ|ခွေ\s*အပူးပါ|ခွေp|ခွေa|ခပ|ka)/gi, 'kp');
         line = line.replace(/ညီအစ်ကို|ညီအကို|ညီကို|ညက|bro|br/g, 'bro');
-      
-        line = line.replace(/အပူး၁၀ကွက်|အပူး10ကွက်|အပူးစုံ|အပူး|အပ|ပူး/g, 'ap');
-      
+
         line = line.replace(/ပါဝါ|ပဝ|power/g, 'pw');
         line = line.replace(/အပါ|ပတ်သီး|ပါတ်|ပတ်|ပါ/g, 'p');
           
@@ -2195,6 +2193,7 @@ function copySplitOverLimitText() {
               .replace(/မထိပ်|မထ/g, 'mh')
               .replace(/စုံနောက်|စန/g, 'st')
               .replace(/မနောက်|မန/g, 'mt')
+              .replace(/အပူး၁၀ကွက်|အပူး10ကွက်|အပူး|အပ|ပူး/g, 'ap')
               .replace(/ဒဲ့ကပ်|ကပ်/g, 'dk')
               .replace(/ထိပ်စီး|ထိပ်|ထ/g, 'h');
 
@@ -2380,7 +2379,7 @@ function copySplitOverLimitText() {
   }
     field.value = ""; 
 }
-  function processStandardCommands(line, matches) {
+function processStandardCommands(line, matches) {
     // English Shortcut များ
     const SHORTCUT_LISTS = { 
         'ap': ["00","11","22","33","44","55","66","77","88","99"], 
@@ -2394,7 +2393,7 @@ function copySplitOverLimitText() {
         'နတ္ခတ်': 'nk', 'နက္ခတ်': 'nk', 'နတ္ခက်': 'nk',  'နက္ခက်': 'nk', 'နက်ခတ်': 'nk', 'နက်ခက်': 'nk', 'နခ': 'nk', 'နတ်ခတ်': 'nk', 'နတ်ခက်': 'nk', 
         'ပါဝါ': 'pw', 'ပဝ': 'pw',
         'ညီအစ်ကို': 'bro', 'ညီကို': 'bro', 'ညီအကို': 'bro',
-        'အပူး': 'ap', 'အပ': 'ap', 'ပူး': 'ap','အပူးစုံ': 'ap',
+        'အပူး': 'ap', 'အပ': 'ap', 'ပူး': 'ap',
         'မမ': 'mm', 
         'စစ': 'ss', 'စုံစုံ': 'ss',
         'စမ': 'sm', 'စုံမ': 'sm',
@@ -4533,7 +4532,7 @@ function copySplitOverLimitText2() {
             
             winnersHtml += `<div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #eee; padding: 4px 0; align-items: center;">
                 <span style="font-weight: bold; color: #1a73e8;">👤 ${c.name}</span>
-                <span style="color: #333;">P: <b style="color: #d9534f;">${totalWinAmt.toLocaleString()}</b> | <b style="color: #2e7d32;">${payout.toLocaleString()}</b></span>
+                <span style="color: #333;">ထိုးငွေ: <b style="color: #d9534f;">${totalWinAmt.toLocaleString()}</b> | ရရန်: <b style="color: #2e7d32;">${payout.toLocaleString()}</b></span>
             </div>`;
         }
     });
